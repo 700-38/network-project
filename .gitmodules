@@ -1,0 +1,7 @@
+[submodule "network-project-frontend"]
+	path = network-project-frontend
+	url = https://github.com/700-38/network-project-frontend.git
+
+[submodule "network-project-backend"]
+	path = network-project-backend
+	url = https://github.com/700-38/network-project-backend.git
