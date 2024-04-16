@@ -1,0 +1,29 @@
+name: Update Submodules
+
+on:
+  push:
+    branches:
+      - main  # Specify the branch or branches you want to trigger this action
+  # Optionally, schedule updates
+  schedule:
+    - cron:  '0 0 */2 * *'  # Runs every 2 day at midnight
+
+jobs:
+  update-submodules:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Ensures all history is fetched
+
+    - name: Update submodules
+      run: |
+        git submodule update --remote --recursive
+        git config --global user.email "noreply@github.com"
+        git config --global user.name "GitHub Action"
+
+    - name: Commit and push if changes
+      run: |
+        git commit -am "Update submodules" || echo "No changes to commit"
+        git push origin HEAD:main
