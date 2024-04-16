@@ -8,6 +8,11 @@ on:
   schedule:
     - cron: '0 0 */2 * *' # Runs every 2 day at midnight
 
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
 jobs:
   update-submodules:
     runs-on: ubuntu-latest
