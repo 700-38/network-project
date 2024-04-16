@@ -3,27 +3,68 @@ name: Update Submodules
 on:
   push:
     branches:
-      - main  # Specify the branch or branches you want to trigger this action
+      - main # Specify the branch or branches you want to trigger this action
   # Optionally, schedule updates
   schedule:
-    - cron:  '0 0 */2 * *'  # Runs every 2 day at midnight
+    - cron: '0 0 */2 * *' # Runs every 2 day at midnight
 
 jobs:
   update-submodules:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # Ensures all history is fetched
+      - name: Checkout the main repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-    - name: Update submodules
-      run: |
-        git submodule update --remote --recursive
-        git config --global user.email "noreply@github.com"
-        git config --global user.name "GitHub Action"
+      - name: Checkout frontend submodule
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: 'network-project-frontend'
+          repository: '700-38/network-project-frontend'
+          ref: 'main'
+          token: ${{ secrets.ACCESS_TOKEN }}
 
-    - name: Commit and push if changes
-      run: |
-        git commit -am "Update submodules" || echo "No changes to commit"
-        git push origin HEAD:main
+      - name: Update frontend submodule
+        run: |
+          cd network-project-frontend
+          git pull origin main
+
+      - name: Checkout backend submodule
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: 'network-project-backend'
+          repository: '700-38/network-project-backend'
+          ref: 'main'
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Update backend submodule
+        run: |
+          cd network-project-backend
+          git pull origin main
+
+      - name: Check for submodule changes
+        id: submodule-changes
+        run: |
+          echo "::set-output name=changed::$(git status --porcelain | grep '^ M' | wc -l)"
+
+      - name: Commit submodule updates
+        if: steps.submodule-changes.outputs.changed != '0'
+        run: |
+          git config --global user.email "noreply@github.com"
+          git config --global user.name "GitHub Action"
+          git commit -m "Update submodule to latest commit"
+
+      - name: Push changes to main repository
+        if: steps.submodule-changes.outputs.changed != '0'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          repository: ${{ github.repository }}
+          branch: ${{ github.ref }}
+
+      - name: No changes to commit
+        if: steps.submodule-changes.outputs.changed == '0'
+        run: echo "No changes in the submodule to commit"
