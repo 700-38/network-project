@@ -1,12 +1,12 @@
 'use client';
 
+import { ChatRoomDoc, IMessageProp, ObjectId } from '@shared/types/message';
 import React, { useContext, useEffect, useState } from 'react';
 
-import { ChatRoomDoc, IMessageProp, ObjectId } from '@shared/types/message';
+import { RealmContext } from '../../../context/realm';
 import InputBox from '../../_components/inputBox';
 import MessageList from '../../_components/messageList';
 import Sidebar from '../../_components/sideBar';
-import { RealmContext } from '../../../context/realm';
 
 // Ensure the correct path is used
 
@@ -17,57 +17,60 @@ const ChatPage: React.FC = () => {
   // const cha
   const Realm = useContext(RealmContext);
   const [messages, setMessages] = useState<IMessageProp[]>([]);
-  const [currentRoom, setCurrentRoom] = useState<ObjectId|null>(null);
+  const [currentRoom, setCurrentRoom] = useState<ObjectId | null>(null);
   useEffect(() => {
-    Realm.login('ironpan21@gmail.com','123456')
-  },[])
+    Realm.login('ironpan21@gmail.com', '123456');
+  }, []);
 
   useEffect(() => {
     if (Realm.realm?.isLoggedIn)
       Realm.getChatList().then((rooms) => {
         // Realm.chatRooms = rooms;
-        console.log(rooms)
+        console.log(rooms);
         setCurrentRoom(rooms[0]._id);
       });
-  },[Realm.realm?.isLoggedIn])
+  }, [Realm.realm?.isLoggedIn]);
 
   useEffect(() => {
-    if (Realm.realm?.isLoggedIn && currentRoom != null){
-      console.log("fetching messages")
+    if (Realm.realm?.isLoggedIn && currentRoom != null) {
+      console.log('fetching messages');
       Realm.getMessageList(currentRoom).then((messages) => {
-        console.log(messages)
+        console.log(messages);
         setMessages(messages);
-      })}
-  }, [currentRoom])
+      });
+    }
+  }, [currentRoom]);
 
-  const handleSendMessage = (messageText: string) => {
+  const handleSendMessage = (messageText: string, type: string) => {
     const newMessage: IMessageProp = {
       id: (messages.length + 1).toString(),
       content: messageText,
       sender: Realm.realm?.id as string,
       receiver: currentRoom?.toHexString() as string,
       timestamp: new Date().getTime(),
-      type: 'text',
+      // - 1000 * 60 * 60 * 24
+      type,
     };
     setMessages([...messages, newMessage]);
+    console.log('send message\ncontent:', messageText, 'type:', type);
     Realm.db?.collection('messages').insertOne(newMessage);
   };
 
   const handleSelectRoom = (roomId: ObjectId) => {
     setCurrentRoom(null);
     // You might want to clear messages or load messages specific to the selected room
+    console.log('select room and need to fetch chat history');
     setMessages([]);
 
     Realm.getMessageList(roomId).then((messages) => {
       setMessages(messages);
-  
-    })
+    });
     setCurrentRoom(roomId);
   };
 
   return (
     <div className="flex h-screen max-h-screen w-screen flex-row">
-    <Sidebar rooms={Realm.chatRooms} onSelectRoom={handleSelectRoom} />
+      <Sidebar rooms={Realm.chatRooms} onSelectRoom={handleSelectRoom} />
       <div className="flex flex-1 flex-col pb-2 pt-4">
         <h1 className="mb-4 text-center text-3xl font-bold">
           Chat Room - {Realm.chatRooms.find((room) => room._id === currentRoom)?.name}

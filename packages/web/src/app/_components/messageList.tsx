@@ -37,7 +37,7 @@ const MessageList: React.FC<Props> = ({ messages }) => {
               prevMessage={prevMessage}
               thisMessage={message}
               nextMessage={nextMessage}
-              isClicked={clicked === message.id}
+              isClicked={clicked}
               setIsClicked={setClicked}
             />
           );
