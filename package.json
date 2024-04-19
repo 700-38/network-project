@@ -1,6 +1,9 @@
 {
   "name": "comp-network-chat",
   "private": true,
+  "scripts": {
+    "frontend:dev": "bun --filter 'network-project-frontend' dev"
+  },
   "workspaces": [
     "packages/*"
   ],
