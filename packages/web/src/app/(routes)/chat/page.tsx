@@ -46,7 +46,7 @@ const ChatPage: React.FC = () => {
       content: messageText,
       sender: Realm.realm?.id as string,
       receiver: currentRoom?.toHexString() as string,
-      timestamp: (messages.length + 1) * 100000,
+      timestamp: new Date().getTime(),
       type: 'text',
     };
     setMessages([...messages, newMessage]);
@@ -54,7 +54,7 @@ const ChatPage: React.FC = () => {
   };
 
   const handleSelectRoom = (roomId: ObjectId) => {
-    setCurrentRoom("");
+    setCurrentRoom(null);
     // You might want to clear messages or load messages specific to the selected room
     setMessages([]);
 
@@ -62,13 +62,13 @@ const ChatPage: React.FC = () => {
       setMessages(messages);
   
     })
-    setCurrentRoom(roomId.toHexString());
+    setCurrentRoom(roomId);
   };
 
   return (
     <div className="flex h-screen max-h-screen w-screen flex-row">
-      <Sidebar rooms={Realm.chatRooms} onSelectRoom={handleSelectRoom} />
-      <div className="flex flex-1 flex-col py-4">
+    <Sidebar rooms={Realm.chatRooms} onSelectRoom={handleSelectRoom} />
+      <div className="flex flex-1 flex-col pb-2 pt-4">
         <h1 className="mb-4 text-center text-3xl font-bold">
           Chat Room - {Realm.chatRooms.find((room) => room._id === currentRoom)?.name}
         </h1>
