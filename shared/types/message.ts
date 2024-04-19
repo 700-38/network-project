@@ -1,5 +1,5 @@
-import { BSON } from "realm-web";
-export type ObjectId = BSON.ObjectId;
+import  *  as Realm from "realm-web";
+export type ObjectId = Realm.BSON.ObjectId;
 type Document = globalThis.Realm.Services.MongoDB.Document;
 export interface IMessageProp {
   id: string;

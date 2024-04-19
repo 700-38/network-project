@@ -1,24 +1,28 @@
+'use client';
+
 import type { ChatRoomDoc, IMessageProp, MessageDoc, ObjectId } from '@shared/types/message';
 import { get } from 'http';
 import { createContext, useContext, useState } from 'react';
 import type { Dispatch, FC, PropsWithChildren, ReactPortal, SetStateAction } from 'react';
 import * as Realm from 'realm-web';
-
+import React from 'react'
 // import { useState } from 'react';
 interface TRealmContext {
   db: globalThis.Realm.Services.MongoDBDatabase | null;
   realm: Realm.User | null;
-  login: (user: string, password: string) => void;
+  chatRooms: ChatRoomDoc[];
+  login: (user: string, password: string) => Promise<void>;
   getChatList: () => Promise<ChatRoomDoc[]>;
   getMessageList: (chatRoomId: ObjectId) => Promise<IMessageProp[]>;
   createChatRoom: (name: string, members: string[]) => void;
 }
-const atlasAppId = process.env.PUBLIC_ATLAS_APP_ID;
+const atlasAppId = "application-0-ahdtpog"
 
-const RealmContext = createContext<TRealmContext>({
+export const RealmContext = createContext<TRealmContext>({
   db: null,
   realm: null,
-  login: () => null,
+  chatRooms: [],
+  login: () => Promise.resolve(),
   getChatList: () => Promise.resolve([]),
   getMessageList: () => Promise.resolve([]),
   createChatRoom: () => null,
@@ -26,27 +30,42 @@ const RealmContext = createContext<TRealmContext>({
 
 const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
   // const { children } = props
+  const [chatRooms, setChatRooms] = useState<ChatRoomDoc[]>([]);
   const [realm, setRealm] = useState<Realm.User | null>(null);
   const [db, setDB] = useState<globalThis.Realm.Services.MongoDBDatabase | null>(null);
   if (!atlasAppId) {
     throw new Error('Missing PUBLIC_ATLAS_APP_ID');
   }
   const atlasApp = new Realm.App({ id: atlasAppId });
+
+  const isEmailExist = async (email: string): Promise<boolean> => {
+    if (!realm || !db) {
+      throw new Error('Realm is not initialized');
+    }
+    const user = await db.collection('users').findOne({ email });
+    return !!user
+  }
+
   const login = async (username: string, password: string) => {
+    await atlasApp.emailPasswordAuth.registerUser({ email: username, password }).catch((err) => {
+    });
     const credentials = Realm.Credentials.emailPassword(username, password);
     const user = await atlasApp.logIn(credentials);
-    setRealm(user);
-    setDB(user.mongoClient('mongodb-atlas').db('network-project'));
-    getChatList();
+    await setRealm(user);
+    await setDB(user.mongoClient('mongodb-atlas').db('network-project'));
+    return
+    // getChatList();
   };
 
   const getChatList = async (): Promise<ChatRoomDoc[]> => {
     if (!realm || !db) {
       throw new Error('Realm or db is not initialized');
     }
-    return db
+    const chats = await db
       ?.collection<ChatRoomDoc>('chat')
       .find({ members: realm.id })
+    setChatRooms(chats);
+    return chats;
   };
 
   const getMessageList = async (chatRoomId: ObjectId): Promise<IMessageProp[]> => {
@@ -55,8 +74,8 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
     }
     // db.collection<ChatRoomDoc>("chat").findOne({_id: chatRoomId}).then((chatRoom) => {})
     return db
-      .collection<MessageDoc>('message')
-      .find({ receiver: chatRoomId })
+      .collection<MessageDoc>('messages')
+      .find({ receiver: chatRoomId.toHexString() })
       .then((messages) => {
         return messages;
       });
@@ -85,7 +104,7 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <RealmContext.Provider
-      value={{ login, realm, db, getChatList, getMessageList, createChatRoom }}>
+      value={{ chatRooms, login, realm, db, getChatList, getMessageList, createChatRoom }}>
       {children}
     </RealmContext.Provider>
   );

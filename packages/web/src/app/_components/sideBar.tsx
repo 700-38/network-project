@@ -1,15 +1,16 @@
 'use client';
 
+import { ChatRoomDoc, ObjectId } from '@shared/types/message';
 import React from 'react';
 
 interface ChatRoom {
-  id: string;
+  id: ObjectId;
   name: string;
 }
 
 interface Props {
-  rooms: ChatRoom[];
-  onSelectRoom: (roomId: string) => void;
+  rooms: ChatRoomDoc[];
+  onSelectRoom: (roomId: ObjectId) => void;
 }
 
 const Sidebar: React.FC<Props> = ({ rooms, onSelectRoom }) => {
@@ -19,9 +20,9 @@ const Sidebar: React.FC<Props> = ({ rooms, onSelectRoom }) => {
       <ul className="mt-2">
         {rooms.map((room) => (
           <li
-            key={room.id}
+            key={room._id.toHexString()}
             className="cursor-pointer px-4 py-2 hover:bg-gray-300"
-            onClick={() => onSelectRoom(room.id)}>
+            onClick={() => onSelectRoom(room._id)}>
             {room.name}
           </li>
         ))}
