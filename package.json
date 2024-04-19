@@ -1,0 +1,7 @@
+{
+  "name": "comp-network-chat",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
