@@ -12,7 +12,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    
+
     "plugins": [
       {
         "name": "next"
@@ -20,8 +20,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@shared/*": ["../../shared/*"]
-  
+      "@shared/*": ["../../shared/*"],
+      "@assets/*": ["./src/app/_assets/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
