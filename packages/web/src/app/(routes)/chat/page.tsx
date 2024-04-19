@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 
-import { IMessageProp } from '../../../../../shared/types/message';
-import InputBox from '../_components/inputBox';
-import MessageList from '../_components/messageList';
-import Sidebar from '../_components/sideBar';
+import { IMessageProp } from '../../../../../../shared/types/message';
+import InputBox from '../../_components/inputBox';
+import MessageList from '../../_components/messageList';
+import Sidebar from '../../_components/sideBar';
 
 // Ensure the correct path is used
 
