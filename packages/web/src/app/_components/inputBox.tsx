@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { BiSticker } from 'react-icons/bi';
+import { IoSend } from 'react-icons/io5';
+import { RiEmojiStickerFill } from 'react-icons/ri';
 
 interface Props {
   onSendMessage: (message: string) => void;
@@ -8,6 +11,7 @@ interface Props {
 
 const InputBox: React.FC<Props> = ({ onSendMessage }) => {
   const [input, setInput] = useState('');
+  const [isHovering, setIsHovering] = useState(false); // State to track hovering
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
@@ -26,21 +30,47 @@ const InputBox: React.FC<Props> = ({ onSendMessage }) => {
     }
   };
 
+  const handleOpenStickerModal = () => {
+    // Function to handle opening the sticker modal
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
+
   return (
-    <div className="flex">
+    <div className="flex pt-2">
       <input
         type="text"
         value={input}
         onChange={handleInputChange}
-        onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyPress}
         placeholder="Type a message..."
-        className="flex-grow rounded-l-lg border p-2"
+        className="flex-grow rounded-full border bg-gray-200 p-2 outline-none"
       />
-      <button
+      <div
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleOpenStickerModal}
+        className={`ml-2 flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-gray-100`}>
+        <RiEmojiStickerFill
+          className={`absolute ${isHovering ? 'opacity-100' : 'opacity-0'} h-6 w-6 text-blue-500 transition-opacity`}
+        />
+        <BiSticker
+          className={`h-6 w-6 ${isHovering ? 'opacity-0' : 'opacity-1000'} text-blue-500 transition-opacity`}
+        />
+      </div>
+      <div
         onClick={handleSend}
-        className="rounded-r-lg bg-blue-500 p-2 text-white hover:bg-blue-700">
-        Send
-      </button>
+        className={`ml-2 flex h-10 w-10 items-center justify-center rounded-full transition-colors ${input !== '' && 'hover:bg-gray-100'}`}>
+        <IoSend
+          className={`h-6 w-6 transition-colors ${input === '' ? 'text-zinc-300' : 'text-blue-500'} `}
+        />
+      </div>
     </div>
   );
 };
