@@ -59,14 +59,14 @@ const InputBox: React.FC<Props> = ({ onSendMessage }) => {
         onKeyDown={handleKeyPress}
         onClick={() => setIsStickerModalOpen(false)}
         placeholder="Type a message..."
-        className="flex-grow rounded-full border bg-gray-200 p-2 outline-none"
+        className="bg-project_gray placeholder:text-project_light_gray text-project_white flex-grow rounded-full px-3 py-2 outline-none focus:outline-none"
       />
       <div className="relative flex flex-row items-center justify-center">
         <div
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleOpenStickerModal}
-          className={`ml-2 flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-gray-100`}>
+          className={`hover:bg-project_gray ml-2 flex h-10 w-10 items-center justify-center rounded-full transition-colors`}>
           <RiEmojiStickerFill
             className={`absolute ${isHovering || isStickerModalOpen ? 'opacity-100' : 'opacity-0'} h-6 w-6 text-blue-500 transition-opacity`}
           />
@@ -78,7 +78,7 @@ const InputBox: React.FC<Props> = ({ onSendMessage }) => {
       </div>
       <div
         onClick={handleSend}
-        className={`ml-2 flex h-10 w-10 items-center justify-center rounded-full transition-colors ${input !== '' && 'hover:bg-gray-100'}`}>
+        className={`ml-2 flex h-10 w-10 items-center justify-center rounded-full transition-colors ${input !== '' && 'hover:bg-project_gray'}`}>
         <IoSend
           className={`h-6 w-6 transition-colors ${input === '' ? 'text-zinc-300' : 'text-blue-500'} `}
         />

@@ -181,13 +181,13 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen max-h-screen w-screen flex-row">
+    <div className="bg-project_black flex h-screen max-h-screen w-screen flex-row">
       <Sidebar rooms={Realm.chatRooms} onSelectRoom={handleSelectRoom} />
       <div className="flex flex-1 flex-col pb-2 pt-4">
-        <h1 className="mb-4 text-center text-3xl font-bold">
+        <h1 className="text-project_white mb-4 text-center text-3xl font-bold">
           Chat Room - {Realm.chatRooms.find((room) => room._id === currentRoom)?.name}
         </h1>
-        <div className="flex flex-1 flex-col overflow-scroll">
+        <div className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
           <MessageList
             messages={messages}
             fisrtAccess={fisrtAccess}

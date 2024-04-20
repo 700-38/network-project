@@ -42,6 +42,7 @@ const MessageBubble: FC<Props> = ({
               nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 2 &&
               'pb-2'
         }`}>
+        {/* Date time */}
         <div
           className={`mx-auto ${
             (prevMessage && thisMessage.timestamp - prevMessage.timestamp > 1000 * 60 * 15) ||
@@ -53,7 +54,7 @@ const MessageBubble: FC<Props> = ({
               ? 'h-10'
               : 'h-0 opacity-0'
           }
-           flex items-center justify-center overflow-hidden transition-[height,opacity] duration-300`}>
+           text-project_light_gray flex items-center justify-center overflow-hidden transition-[height,opacity] duration-300`}>
           {new Date().toLocaleDateString() !== new Date(thisMessage.timestamp).toLocaleDateString()
             ? new Date(thisMessage.timestamp).getDate().toString().padStart(2, '0') +
               '/' +
@@ -67,6 +68,8 @@ const MessageBubble: FC<Props> = ({
               ':' +
               new Date(thisMessage.timestamp).getMinutes().toString().padStart(2, '0')}
         </div>
+
+        {/* Message */}
         <div className={`flex w-full justify-end`}>
           {thisMessage.type === 'text' ? (
             <div
@@ -89,7 +92,7 @@ const MessageBubble: FC<Props> = ({
                isClicked !== nextMessage.id
                  ? 'rounded-br-md'
                  : 'rounded-br-3xl'
-             } min-w-[40px] max-w-[400px] whitespace-pre-wrap break-words rounded-l-3xl ${isClicked === thisMessage.id ? 'bg-blue-400' : 'bg-blue-300'} px-3 py-2 text-center`}
+             } text-project_white min-w-[40px] max-w-[400px] whitespace-pre-wrap break-words rounded-l-3xl ${isClicked === thisMessage.id ? 'bg-project_dark_blue' : 'bg-project_blue'} px-3 py-2 text-center`}
               onClick={() => {
                 setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                 console.log(thisMessage, prevMessage, nextMessage);
@@ -133,7 +136,7 @@ const MessageBubble: FC<Props> = ({
               ? 'h-10'
               : 'h-0 opacity-0'
           }
-           flex items-center justify-center overflow-hidden transition-[height,opacity] duration-300`}>
+          text-project_light_gray flex items-center justify-center overflow-hidden transition-[height,opacity] duration-300`}>
           {new Date().toLocaleDateString() !== new Date(thisMessage.timestamp).toLocaleDateString()
             ? new Date(thisMessage.timestamp).getDate().toString().padStart(2, '0') +
               '/' +
