@@ -2,7 +2,9 @@
   "name": "comp-network-chat",
   "private": true,
   "scripts": {
-    "frontend:dev": "bun --filter 'network-project-frontend' dev"
+    "frontend:dev": "bun --filter 'network-project-frontend' dev",
+    "frontend:prepare": "husky packages/web",
+    "prepare": "husky"
   },
   "workspaces": [
     "packages/*"

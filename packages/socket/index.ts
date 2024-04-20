@@ -1,6 +1,5 @@
 import { Server } from "socket.io";
 import { App } from "uWebSockets.js";
-import Realm from "realm";
 import axios from "axios";
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@shared/types/socket";
 
@@ -14,7 +13,7 @@ io.on("connection", (socket) => {
     
   })
 });
-
+let adfasf: string = 3;
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   axios.post("https://services.cloud.mongodb.com/api/admin/v3.0/groups/6329618cfe18f60df52316d9/apps/{appId}/users/verify_token", { token }).then((res) => {
