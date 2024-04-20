@@ -1,4 +1,3 @@
 cd packages/web
 bun run lint
 bun run build
-exit 1
