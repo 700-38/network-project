@@ -53,6 +53,7 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
     const user = await atlasApp.logIn(credentials);
     await setRealm(user);
     await setDB(user.mongoClient('mongodb-atlas').db('network-project'));
+    console.log(user.accessToken)
     return
     // getChatList();
   };

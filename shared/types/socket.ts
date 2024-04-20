@@ -6,6 +6,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   userTyping: (isTyping: boolean) => void;
   sendMessage: (message: string) => void;
+  joinChat: (chatId: string) => void;
 }
 
 
