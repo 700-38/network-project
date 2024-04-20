@@ -8,9 +8,11 @@ import MessageBubble from './messageBubble';
 
 interface Props {
   messages: IMessageProp[];
+  fisrtAccess: number;
+  setFirstAccess: (value: number) => void;
 }
 
-const MessageList: React.FC<Props> = ({ messages }) => {
+const MessageList: React.FC<Props> = ({ messages, fisrtAccess, setFirstAccess }) => {
   const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 
   const [clicked, setClicked] = useState('');
@@ -19,8 +21,15 @@ const MessageList: React.FC<Props> = ({ messages }) => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
-    scrollToBottom();
+    console.log('fisrtAccess', fisrtAccess);
+    if (fisrtAccess > 1) scrollToBottom();
+    else {
+      endOfMessagesRef.current?.scrollIntoView();
+      setFirstAccess(fisrtAccess + 1);
+    }
   }, [messages]); // Dependency on messages means this effect runs every time messages update.
 
   return (

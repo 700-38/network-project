@@ -18,6 +18,7 @@ const ChatPage: React.FC = () => {
   const Realm = useContext(RealmContext);
   const [messages, setMessages] = useState<IMessageProp[]>([]);
   const [currentRoom, setCurrentRoom] = useState<ObjectId | null>(null);
+  const [fisrtAccess, setFirstAccess] = useState(0);
   useEffect(() => {
     Realm.login('ironpan21@gmail.com', '123456');
   }, []);
@@ -35,7 +36,108 @@ const ChatPage: React.FC = () => {
     if (Realm.realm?.isLoggedIn && currentRoom != null) {
       console.log('fetching messages');
       Realm.getMessageList(currentRoom).then((messages) => {
-        console.log(messages);
+        // console.log([
+        //   ...messages,
+        //   {
+        //     content: 'hello',
+        //     id: '43',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622b4616e49de6aci07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '44',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622b46aimciwmcc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '45',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622basomoacmsc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '46',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622basomoacmsc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '47',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622basomoacmsc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '48',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '662askmocwmacmsc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        // ]);
+        // setMessages([
+        //   ...messages,
+        //   {
+        //     content: 'hello',
+        //     id: '43',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622b4616e49de6aci07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '44',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622b46aimciwmcc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '45',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622basomoacmsc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '46',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622basomoacmsc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '47',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '6622basomoacmsc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        //   {
+        //     content: 'hello',
+        //     id: '48',
+        //     receiver: '6622d5b9b523e8c7d0773b96',
+        //     sender: '662askmocwmacmsc9b07b',
+        //     timestamp: 1713600899414,
+        //     type: 'text',
+        //   },
+        // ]);
         setMessages(messages);
       });
     }
@@ -52,11 +154,21 @@ const ChatPage: React.FC = () => {
       type,
     };
     setMessages([...messages, newMessage]);
-    console.log('send message\ncontent:', messageText, 'type:', type);
+    console.log(
+      'send message\ncontent:',
+      messageText,
+      'type:',
+      type,
+      'receiver:',
+      currentRoom?.toHexString(),
+      'sender:',
+      Realm.realm?.id
+    );
     Realm.db?.collection('messages').insertOne(newMessage);
   };
 
   const handleSelectRoom = (roomId: ObjectId) => {
+    setFirstAccess(0);
     setCurrentRoom(null);
     // You might want to clear messages or load messages specific to the selected room
     console.log('select room and need to fetch chat history');
@@ -76,7 +188,11 @@ const ChatPage: React.FC = () => {
           Chat Room - {Realm.chatRooms.find((room) => room._id === currentRoom)?.name}
         </h1>
         <div className="flex flex-1 flex-col overflow-scroll">
-          <MessageList messages={messages} />
+          <MessageList
+            messages={messages}
+            fisrtAccess={fisrtAccess}
+            setFirstAccess={setFirstAccess}
+          />
         </div>
         <div className="justify-self-end px-4">
           <InputBox onSendMessage={handleSendMessage} />
