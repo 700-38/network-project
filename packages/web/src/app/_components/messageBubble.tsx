@@ -120,7 +120,7 @@ const MessageBubble: FC<Props> = ({
                isClicked !== nextMessage.id
                  ? 'rounded-br-md'
                  : 'rounded-br-3xl'
-             } min-w-[40px] max-w-[400px] whitespace-pre-wrap break-words rounded-l-3xl text-project_white ${isClicked === thisMessage.id ? 'bg-project_dark_blue' : 'bg-project_blue'} px-3 py-2 text-center`}
+             } min-w-[30px] max-w-[400px] whitespace-pre-wrap break-words rounded-l-3xl text-project_white ${isClicked === thisMessage.id ? 'bg-project_dark_blue' : 'bg-project_blue'} px-3.5 py-2 text-start`}
               onClick={() => {
                 setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                 console.log(thisMessage, prevMessage, nextMessage);
@@ -148,10 +148,9 @@ const MessageBubble: FC<Props> = ({
         className={`mb-1 flex flex-col items-center justify-center transition-[padding] duration-300 ${
           isClicked === thisMessage.id
             ? 'pb-4'
-            : (nextMessage &&
-                nextMessage.sender !== thisMessage.sender &&
-                nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 2) ||
-              (nextMessage && nextMessage.sender !== thisMessage.sender && 'pb-2')
+            : ((nextMessage && nextMessage.sender !== thisMessage.sender) ||
+                (nextMessage && nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 2)) &&
+              'pb-2'
         }`}>
         <div
           className={`mx-auto ${
@@ -218,7 +217,7 @@ const MessageBubble: FC<Props> = ({
                 ? 'rounded-bl-md'
                 : 'rounded-bl-3xl'
             } 
-            min-w-[40px] ${isClicked === thisMessage.id ? 'bg-project_dark_purple' : 'bg-project_purple'} max-w-[400px] whitespace-pre-wrap break-words rounded-r-3xl px-3 py-2 text-center text-project_white`}
+            min-w-[30px] ${isClicked === thisMessage.id ? 'bg-project_dark_purple' : 'bg-project_purple'} max-w-[400px] whitespace-pre-wrap break-words rounded-r-3xl px-3.5 py-2 text-start text-project_white`}
               onClick={() => {
                 setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                 console.log(thisMessage, prevMessage, nextMessage);
