@@ -20,6 +20,11 @@ const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
   const [groupId, setGroupId] = useState<string>('');
 
   const createChat = async () => {
+    setNames([]);
+    setCurrentName('');
+    setGroupName('');
+    setGroupId('');
+
     if (names.length == 1) {
       const newChatId = await Realm.createChatRoom(
         (await Realm.getNameFromId(names[0])) || 'Chat',
@@ -37,8 +42,14 @@ const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
   };
 
   const joinChat = async () => {
+    setNames([]);
+    setCurrentName('');
+    setGroupName('');
+    setGroupId('');
+
     await Realm.joinChatRoom(ObjectIdUtilities.createObjectIdFromString(groupId));
     router.push(`/chat/${groupId}`);
+    modalRef.current?.close();
   };
 
   return (
