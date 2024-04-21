@@ -67,7 +67,7 @@ io.on("connection", (socket) => {
       const members = chat.members
       // const room = socket.
       io.to(socket.data.room).emit("newMessage", nmsgPaylaod)
-      members.filter(m => whoIsActive.get(socket.data.room)?.includes(m)).forEach((member) => {
+      members.filter(m => !(whoIsActive.get(socket.data.room)?.includes(m))).forEach((member) => {
         io.to(member).emit("newMessage", nmsgPaylaod)
       })
     })

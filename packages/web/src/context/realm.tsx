@@ -43,17 +43,22 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
   const atlasApp = new Realm.App({ id: atlasAppId });
 
   const isEmailExist = async (email: string): Promise<boolean> => {
-    if (!realm || !db) {
-      throw new Error('Realm is not initialized');
-    }
     const publicUser = await publicAtlasApp
     const {result} = await publicUser.functions.checkUserExist(email)
     return result
   }
 
-  const login = async (username: string, password: string) => {
-    await atlasApp.emailPasswordAuth.registerUser({ email: username, password }).catch((err) => {
+  const registerUser = async (email: string, password: string) => {
+    const alreadyExist = await isEmailExist(email)
+    if (alreadyExist) throw new Error('Email already exist')
+    await atlasApp.emailPasswordAuth.registerUser({ email, password }).catch((err) => {
+      console.log(err)
     });
+  }
+
+  const login = async (username: string, password: string) => {
+    // await atlasApp.emailPasswordAuth.registerUser({ email: username, password }).catch((err) => {
+    // });
     const credentials = Realm.Credentials.emailPassword(username, password);
     const user = await atlasApp.logIn(credentials);
     await setRealm(user);

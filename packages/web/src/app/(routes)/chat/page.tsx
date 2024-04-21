@@ -25,6 +25,7 @@ const ChatPage: React.FC = () => {
   const modalRef = useRef<HTMLDialogElement | null>(null);
 
   useEffect(() => {
+    Realm.isEmailExist('ironpan21@gmail.com').then((res) => {console.log(res)})
     Realm.login('ironpan21@gmail.com', '123456');
   }, []);
 
