@@ -32,10 +32,10 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="bg-project_black flex h-screen items-center justify-center px-4">
-      <div className="bg-project_black border-project_gray w-full max-w-md space-y-8 rounded-lg border-2 p-8 shadow-lg">
+    <div className="flex h-screen items-center justify-center bg-project_black px-4">
+      <div className="w-full max-w-md space-y-8 rounded-lg border-2 border-project_gray bg-project_black p-8 shadow-lg">
         <div>
-          <h2 className="text-project_white mt-6 text-center text-3xl font-extrabold">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-project_white">
             Enter your username
           </h2>
           {error && <p className="mt-2 text-center text-sm text-red-600">{error}</p>}
@@ -52,7 +52,7 @@ const RegisterPage = () => {
                 name="username"
                 type="text"
                 required
-                className={`relative block w-full ${isUsernameExist ? 'rounded-t-md' : 'rounded-md'} bg-project_gray text-project_white placeholder-project_light_gray appearance-none px-3 py-2 focus:outline-none sm:text-sm`}
+                className={`relative block w-full ${isUsernameExist ? 'rounded-t-md' : 'rounded-md'} appearance-none bg-project_gray px-3 py-2 text-project_white placeholder-project_light_gray focus:outline-none sm:text-sm`}
                 placeholder="Username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -81,7 +81,7 @@ const RegisterPage = () => {
             <button
               type="button"
               onClick={handleRegister}
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              className="group relative flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
               Sign in
             </button>
           </div>
