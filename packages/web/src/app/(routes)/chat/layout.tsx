@@ -8,6 +8,7 @@ import { RealmContext } from '@context/realm';
 import { ChatRoomDoc, IMessageProp, ObjectId, ObjectIdUtilities } from '@shared/types/message';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export default function RootLayout({
   children,
@@ -24,8 +25,16 @@ export default function RootLayout({
 
   useEffect(() => {
     const login = async () => {
-      await Realm.login('ironpan21@gmail.com', '123456');
-      console.log('login success');
+      const username = localStorage.getItem('username');
+      const password = localStorage.getItem('password');
+
+      if (!username || !password) {
+        console.log('no username or password');
+        router.push('/login');
+        return;
+      }
+
+      await Realm.login(username, password);
     };
 
     login();
@@ -34,6 +43,9 @@ export default function RootLayout({
   useEffect(() => {
     const initial = async () => {
       if (Realm.realm?.isLoggedIn) {
+        console.log('login success', Realm.realm?.id);
+        toast.info(`Welcome ${await Realm.getNameFromId(Realm.realm?.id || '')}`);
+
         await Realm.getChatList();
         console.log('get chat list success');
       }

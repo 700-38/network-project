@@ -41,3 +41,9 @@ export interface IChatRoom {
 }
 
 export interface ChatRoomDoc extends Document, IChatRoom {}
+
+export interface IUserInfo {
+  name: string;
+}
+
+export interface UserDoc extends Document, IUserInfo {}

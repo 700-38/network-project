@@ -1,6 +1,13 @@
 'use client';
 
-import type { ChatRoomDoc, IMessageProp, MessageDoc, ObjectId } from '@shared/types/message';
+import {
+  type ChatRoomDoc,
+  type IMessageProp,
+  type MessageDoc,
+  type ObjectId,
+  ObjectIdUtilities,
+  type UserDoc,
+} from '@shared/types/message';
 import { get } from 'http';
 import { createContext, useContext, useState } from 'react';
 import type { Dispatch, FC, PropsWithChildren, ReactPortal, SetStateAction } from 'react';
@@ -8,7 +15,8 @@ import React from 'react';
 import * as Realm from 'realm-web';
 
 // import { useState } from 'react';
-const apiKey = 'ewtZ3PaQTC1eyah0QfmIlGhZt5dwWQzbzPKEVMzJjbGOH6cLBIIjqLoCXQvYdIdH';
+const atlasAppId = 'application-0-phbwtop';
+const apiKey = 'uqkKPevpKWLdgUxckOFdb1r2oYg5lAXAlLtcpbbiNxl0HVk1WWjO4LAk0m8ce3jC';
 interface TRealmContext {
   db: globalThis.Realm.Services.MongoDBDatabase | null;
   realm: Realm.User | null;
@@ -16,11 +24,11 @@ interface TRealmContext {
   registerUser: (username: string, password: string) => Promise<void>;
   login: (username: string, password: string) => Promise<void>;
   getChatList: () => Promise<ChatRoomDoc[]>;
+  getNameFromId: (id: string) => Promise<string | null>;
   getMessageList: (chatRoomId: ObjectId) => Promise<IMessageProp[]>;
   createChatRoom: (name: string, members: string[]) => void;
   isUserExist: (username: string) => Promise<boolean>;
 }
-const atlasAppId = 'application-0-ahdtpog';
 
 export const RealmContext = createContext<TRealmContext>({
   db: null,
@@ -29,6 +37,7 @@ export const RealmContext = createContext<TRealmContext>({
   registerUser: () => Promise.resolve(),
   login: () => Promise.resolve(),
   getChatList: () => Promise.resolve([]),
+  getNameFromId: () => Promise.resolve(''),
   getMessageList: () => Promise.resolve([]),
   createChatRoom: () => null,
   isUserExist: () => Promise.resolve(true),
@@ -47,27 +56,47 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const isUserExist = async (username: string): Promise<boolean> => {
     const publicUser = await publicAtlasApp;
-    const { result } = await publicUser.functions.checkUserExist(username);
-    return result;
+    const db = await publicUser.mongoClient('mongodb-atlas').db('network-project');
+    const users = db.collection<UserDoc>('users');
+    const result = await users.findOne({ name: { $regex: `^${username}$`, $options: 'i' } });
+    return result !== null;
   };
 
   const registerUser = async (username: string, password: string) => {
     const alreadyExist = await isUserExist(username);
     if (alreadyExist) throw new Error('Username already exist');
-    await atlasApp.emailPasswordAuth.registerUser({ email: username, password }).catch((err) => {
-      console.log(err);
-    });
+    const usernameParsed = `${username.toLowerCase()}@thegoose.work`;
+    await atlasApp.emailPasswordAuth
+      .registerUser({ email: usernameParsed, password })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const login = async (username: string, password: string) => {
     // await atlasApp.emailPasswordAuth.registerUser({ email: username, password }).catch((err) => {
     // });
-    const credentials = Realm.Credentials.emailPassword(username, password);
+    const usernameParsed = `${username.toLowerCase()}@thegoose.work`;
+    const credentials = Realm.Credentials.emailPassword(usernameParsed, password);
     const user = await atlasApp.logIn(credentials);
     await setRealm(user);
     await setDB(user.mongoClient('mongodb-atlas').db('network-project'));
     console.log(user.accessToken);
-    return;
+
+    const alreadyExist = await isUserExist(username);
+    if (alreadyExist) return;
+
+    const publicUser = await publicAtlasApp;
+    const db = await publicUser.mongoClient('mongodb-atlas').db('network-project');
+    // const db = await user.mongoClient('mongodb-atlas').db('network-project');
+
+    const users = db.collection<UserDoc>('users');
+    console.log(await users.find());
+    await users.insertOne({
+      _id: user.id,
+      name: username,
+    });
+
     // getChatList();
   };
 
@@ -90,6 +119,20 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
       .find({ receiver: chatRoomId.toHexString() })
       .then((messages) => {
         return messages;
+      });
+  };
+
+  const getNameFromId = async (id: string): Promise<string | null> => {
+    const publicUser = await publicAtlasApp;
+    const db = await publicUser.mongoClient('mongodb-atlas').db('network-project');
+
+    console.log(id);
+
+    return await db
+      .collection<UserDoc>('users')
+      .findOne({ _id: id })
+      .then((user) => {
+        return user ? user.name : null;
       });
   };
 
@@ -124,6 +167,7 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
         db,
         getChatList,
         getMessageList,
+        getNameFromId,
         createChatRoom,
         isUserExist,
       }}>
