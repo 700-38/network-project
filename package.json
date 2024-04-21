@@ -4,6 +4,7 @@
   "scripts": {
     "frontend:dev": "bun --filter 'network-project-frontend' dev",
     "frontend:prepare": "husky packages/web",
+    "socket:prepare": "husky packages/socket",
     "prepare": "husky"
   },
   "workspaces": [
