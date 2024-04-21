@@ -80,7 +80,9 @@ const Sidebar: React.FC<Props> = ({ rooms, currentRoomId, onSelectRoom, openModa
             </div>
             <div className="flex flex-col justify-start px-4">
               <div className="cursor-pointer">{room.realName}</div>
-              <div className="text-project_light_gray">You: สวัสดีครับ</div>
+              <div className="text-project_light_gray">
+                {Realm.realm?.id == room.lastMessage?.sender && 'You:'} {room.lastMessage?.content}
+              </div>
             </div>
           </div>
         ))}

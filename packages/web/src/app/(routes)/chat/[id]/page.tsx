@@ -76,7 +76,8 @@ const ChatPage: React.FC = () => {
     };
     setMessages([...messages, newMessage]);
     console.log('send message\ncontent:', newMessage);
-    Realm.db?.collection('messages').insertOne(newMessage);
+    Realm.storeMessage(newMessage);
+    // Realm.db?.collection('messages').insertOne(newMessage);
   };
 
   return (

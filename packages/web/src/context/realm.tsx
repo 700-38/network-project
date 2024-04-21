@@ -30,6 +30,7 @@ interface TRealmContext {
   joinChatRoom: (chatRoomId: ObjectId | null) => void;
   isUserExist: (username: string) => Promise<boolean>;
   isIdExist: (id: string) => Promise<boolean>;
+  storeMessage: (message: IMessageProp) => void;
 }
 
 export const RealmContext = createContext<TRealmContext>({
@@ -45,6 +46,7 @@ export const RealmContext = createContext<TRealmContext>({
   joinChatRoom: () => null,
   isUserExist: () => Promise.resolve(true),
   isIdExist: () => Promise.resolve(true),
+  storeMessage: () => null,
 });
 const publicAtlasApp = new Realm.App({ id: atlasAppId }).logIn(Realm.Credentials.apiKey(apiKey));
 
@@ -195,6 +197,20 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
       .updateOne({ _id: chatRoomId }, { $set: { members: Array.from(membersSet) } });
   };
 
+  const storeMessage = async (message: IMessageProp) => {
+    if (!realm || !db) {
+      return;
+    }
+
+    await db.collection<MessageDoc>('messages').insertOne(message);
+    await db
+      .collection<MessageDoc>('chat')
+      .updateOne(
+        { _id: ObjectIdUtilities.createObjectIdFromString(message.receiver) },
+        { $set: { lastMessage: message } }
+      );
+  };
+
   return (
     <RealmContext.Provider
       value={{
@@ -210,6 +226,7 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
         joinChatRoom,
         isUserExist,
         isIdExist,
+        storeMessage,
       }}>
       {children}
     </RealmContext.Provider>
