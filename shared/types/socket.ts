@@ -1,5 +1,5 @@
 export interface ServerToClientEvents {
-  newMessage: (data: ChatData) => void;
+  newMessage: (data: NewMessageData) => void;
   otherTyping: (whoIsTyping: string[]) => void;
   newActive: (whoIsActive: string[]) => void;
 }
@@ -12,9 +12,9 @@ export interface ClientToServerEvents {
 
 
 
-interface ChatData {
+interface NewMessageData {
   message: string;
-  user: string;
+  roomId: string;
   timestamp: Date;
 
 }

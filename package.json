@@ -11,6 +11,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "mongodb": "^6.5.0",
     "realm-web": "^2.0.0"
   }
 }

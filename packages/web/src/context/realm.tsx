@@ -7,6 +7,7 @@ import type { Dispatch, FC, PropsWithChildren, ReactPortal, SetStateAction } fro
 import * as Realm from 'realm-web';
 import React from 'react'
 // import { useState } from 'react';
+const apiKey = "ewtZ3PaQTC1eyah0QfmIlGhZt5dwWQzbzPKEVMzJjbGOH6cLBIIjqLoCXQvYdIdH"
 interface TRealmContext {
   db: globalThis.Realm.Services.MongoDBDatabase | null;
   realm: Realm.User | null;
