@@ -16,6 +16,7 @@ interface TRealmContext {
   getChatList: () => Promise<ChatRoomDoc[]>;
   getMessageList: (chatRoomId: ObjectId) => Promise<IMessageProp[]>;
   createChatRoom: (name: string, members: string[]) => void;
+  isEmailExist: (email: string) => Promise<boolean>;
 }
 const atlasAppId = "application-0-ahdtpog"
 
@@ -27,7 +28,9 @@ export const RealmContext = createContext<TRealmContext>({
   getChatList: () => Promise.resolve([]),
   getMessageList: () => Promise.resolve([]),
   createChatRoom: () => null,
+  isEmailExist: ()=> Promise.resolve(true)
 });
+const publicAtlasApp = (new Realm.App({ id: atlasAppId })).logIn(Realm.Credentials.apiKey(apiKey))
 
 const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
   // const { children } = props
@@ -43,8 +46,9 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
     if (!realm || !db) {
       throw new Error('Realm is not initialized');
     }
-    const user = await db.collection('users').findOne({ email });
-    return !!user
+    const publicUser = await publicAtlasApp
+    const {result} = await publicUser.functions.checkUserExist(email)
+    return result
   }
 
   const login = async (username: string, password: string) => {
@@ -106,7 +110,7 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <RealmContext.Provider
-      value={{ chatRooms, login, realm, db, getChatList, getMessageList, createChatRoom }}>
+      value={{ chatRooms, login, realm, db, getChatList, getMessageList, createChatRoom, isEmailExist }}>
       {children}
     </RealmContext.Provider>
   );
