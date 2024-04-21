@@ -2,10 +2,12 @@
 'use client';
 
 import { RealmContext } from '@/context/realm';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { FC, useContext, useState } from 'react';
 
 import { IMessageProp } from '../../../../../shared/types/message';
+import { stickers } from './stickerModal';
 
 interface Props {
   prevMessage?: IMessageProp;
@@ -24,12 +26,38 @@ const MessageBubble: FC<Props> = ({
 }) => {
   const router = useRouter();
 
-  const stickers = ['🌟', '💬', '🎉', '👍'];
   const Realm = useContext(RealmContext);
   const yourId = Realm.realm?.id || '';
   if (yourId === '') {
     router.push('/login');
   }
+  const formatDaysAgo = (daysAgo: number, date: number): string => {
+    if (daysAgo <= 0) {
+      return 'Invalid input, daysAgo should be a positive integer';
+    } else if (daysAgo === 1) {
+      return 'Yesterday';
+    } else if (daysAgo <= 14) {
+      return `${daysAgo} days ago`;
+    } else {
+      return 'More than 14 days ago';
+    }
+  };
+
+  const getDayAndShortMonth = (timestampInMilliseconds: number): string => {
+    // Ensure the timestamp is in milliseconds, convert if necessary
+
+    // Create a Date object from the timestamp
+    const date = new Date(timestampInMilliseconds);
+
+    // Get the day of the month
+    const day = date.getDate();
+
+    // Get the abbreviated month (3-letter)
+    const month = date.toLocaleString('en', { month: 'short' });
+
+    // Return the formatted string
+    return `${day} ${month.toUpperCase()}`;
+  };
 
   if (thisMessage.sender === yourId)
     return (
@@ -54,13 +82,13 @@ const MessageBubble: FC<Props> = ({
               ? 'h-10'
               : 'h-0 opacity-0'
           }
-           text-project_light_gray flex items-center justify-center overflow-hidden transition-[height,opacity] duration-300`}>
+           flex items-center justify-center overflow-hidden text-project_light_gray transition-[height,opacity] duration-300`}>
           {new Date().toLocaleDateString() !== new Date(thisMessage.timestamp).toLocaleDateString()
-            ? new Date(thisMessage.timestamp).getDate().toString().padStart(2, '0') +
-              '/' +
-              new Date(thisMessage.timestamp).getMonth().toString().padStart(2, '0') +
-              `${new Date().getFullYear() !== new Date(thisMessage.timestamp).getFullYear() ? new Date(thisMessage.timestamp).getFullYear() : ''}` +
-              ' ' +
+            ? //   new Date(thisMessage.timestamp).getDate().toString().padStart(2, '0') +
+              //   '/' +
+              //   new Date(thisMessage.timestamp).getMonth().toString().padStart(2, '0')
+              getDayAndShortMonth(thisMessage.timestamp) +
+              `${new Date().getFullYear() !== new Date(thisMessage.timestamp).getFullYear() ? new Date(thisMessage.timestamp).getFullYear() : ''} at ` +
               new Date(thisMessage.timestamp).getHours().toString().padStart(2, '0') +
               ':' +
               new Date(thisMessage.timestamp).getMinutes().toString().padStart(2, '0')
@@ -76,7 +104,7 @@ const MessageBubble: FC<Props> = ({
               className={`transition-all duration-300 ${
                 prevMessage &&
                 prevMessage.sender === yourId &&
-                thisMessage.timestamp - prevMessage.timestamp <= 1000 * 60 * 15 && // 15 mins
+                thisMessage.timestamp - prevMessage.timestamp <= 1000 * 60 * 2 && // 15 mins
                 !(isClicked === thisMessage.id) &&
                 prevMessage.type === 'text' &&
                 isClicked !== prevMessage.id
@@ -86,13 +114,13 @@ const MessageBubble: FC<Props> = ({
              ${
                nextMessage &&
                nextMessage.sender === yourId &&
-               nextMessage.timestamp - thisMessage.timestamp <= 1000 * 60 * 15 && // 15 mins
+               nextMessage.timestamp - thisMessage.timestamp <= 1000 * 60 * 2 && // 15 mins
                !(isClicked === thisMessage.id) &&
                nextMessage.type === 'text' &&
                isClicked !== nextMessage.id
                  ? 'rounded-br-md'
                  : 'rounded-br-3xl'
-             } text-project_white min-w-[40px] max-w-[400px] whitespace-pre-wrap break-words rounded-l-3xl ${isClicked === thisMessage.id ? 'bg-project_dark_blue' : 'bg-project_blue'} px-3 py-2 text-center`}
+             } min-w-[40px] max-w-[400px] whitespace-pre-wrap break-words rounded-l-3xl text-project_white ${isClicked === thisMessage.id ? 'bg-project_dark_blue' : 'bg-project_blue'} px-3 py-2 text-center`}
               onClick={() => {
                 setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                 console.log(thisMessage, prevMessage, nextMessage);
@@ -136,13 +164,13 @@ const MessageBubble: FC<Props> = ({
               ? 'h-10'
               : 'h-0 opacity-0'
           }
-          text-project_light_gray flex items-center justify-center overflow-hidden transition-[height,opacity] duration-300`}>
+          flex items-center justify-center overflow-hidden text-project_light_gray transition-[height,opacity] duration-300`}>
           {new Date().toLocaleDateString() !== new Date(thisMessage.timestamp).toLocaleDateString()
-            ? new Date(thisMessage.timestamp).getDate().toString().padStart(2, '0') +
-              '/' +
-              new Date(thisMessage.timestamp).getMonth().toString().padStart(2, '0') +
-              `${new Date().getFullYear() !== new Date(thisMessage.timestamp).getFullYear() ? new Date(thisMessage.timestamp).getFullYear() : ''}` +
-              ' ' +
+            ? //   new Date(thisMessage.timestamp).getDate().toString().padStart(2, '0') +
+              //   '/' +
+              //   new Date(thisMessage.timestamp).getMonth().toString().padStart(2, '0')
+              getDayAndShortMonth(thisMessage.timestamp) +
+              `${new Date().getFullYear() !== new Date(thisMessage.timestamp).getFullYear() ? new Date(thisMessage.timestamp).getFullYear() : ''} at ` +
               new Date(thisMessage.timestamp).getHours().toString().padStart(2, '0') +
               ':' +
               new Date(thisMessage.timestamp).getMinutes().toString().padStart(2, '0')
@@ -156,11 +184,16 @@ const MessageBubble: FC<Props> = ({
               (!nextMessage ||
                 nextMessage.sender !== thisMessage.sender ||
                 isClicked === thisMessage.id ||
-                nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 15 ||
+                nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 2 ||
                 thisMessage.type !== 'text') &&
               'opacity-100'
             } rounded-full bg-gray-400 opacity-0 transition-opacity`}>
-            <p className="font-bold text-white">J</p>
+            <Image
+              src={`https://placehold.co/400x400.png?text=${'A'}`}
+              alt={'A'}
+              className="rounded-full"
+              width={50}
+              height={50}></Image>
           </div>
 
           {thisMessage.type === 'text' ? (
@@ -168,7 +201,7 @@ const MessageBubble: FC<Props> = ({
               className={`transition-all duration-300 ${
                 prevMessage &&
                 prevMessage.sender === thisMessage.sender &&
-                thisMessage.timestamp - prevMessage.timestamp <= 1000 * 60 * 15 && // 15 mins
+                thisMessage.timestamp - prevMessage.timestamp <= 1000 * 60 * 2 && // 15 mins
                 isClicked !== thisMessage.id &&
                 prevMessage.type === 'text' &&
                 isClicked !== prevMessage.id
@@ -185,7 +218,7 @@ const MessageBubble: FC<Props> = ({
                 ? 'rounded-bl-md'
                 : 'rounded-bl-3xl'
             } 
-            min-w-[40px] max-w-[400px] whitespace-pre-wrap break-words rounded-r-3xl bg-green-400 px-3 py-2 text-center`}
+            min-w-[40px] ${isClicked === thisMessage.id ? 'bg-project_dark_purple' : 'bg-project_purple'} max-w-[400px] whitespace-pre-wrap break-words rounded-r-3xl px-3 py-2 text-center text-project_white`}
               onClick={() => {
                 setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                 console.log(thisMessage, prevMessage, nextMessage);
@@ -204,13 +237,6 @@ const MessageBubble: FC<Props> = ({
                 console.log(prevMessage && prevMessage.sender !== thisMessage.sender);
               }}>
               {thisMessage.content}
-              {prevMessage &&
-                prevMessage.sender !== thisMessage.sender &&
-                thisMessage.timestamp - prevMessage.timestamp <= 1000 * 60 * 15 && // 15 mins
-                isClicked !== thisMessage.id &&
-                prevMessage.type === 'text' &&
-                isClicked !== prevMessage.id &&
-                'top not round'}
             </div>
           ) : (
             <div className={`flex w-full justify-start text-6xl`}>
