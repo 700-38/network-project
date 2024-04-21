@@ -19,6 +19,7 @@ const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<IMessageProp[]>([]);
   const [currentRoom, setCurrentRoom] = useState<ObjectId | null>(null);
   const [fisrtAccess, setFirstAccess] = useState(0);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     Realm.login('ironpan21@gmail.com', '123456');
   }, []);
@@ -34,112 +35,120 @@ const ChatPage: React.FC = () => {
 
   useEffect(() => {
     if (Realm.realm?.isLoggedIn && currentRoom != null) {
+      setLoading(true);
       console.log('fetching messages');
-      Realm.getMessageList(currentRoom).then((messages) => {
-        // console.log([
-        //   ...messages,
-        //   {
-        //     content: 'hello',
-        //     id: '43',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622b4616e49de6aci07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '44',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622b46aimciwmcc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '45',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622basomoacmsc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '46',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622basomoacmsc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '47',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622basomoacmsc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '48',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '662askmocwmacmsc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        // ]);
-        // setMessages([
-        //   ...messages,
-        //   {
-        //     content: 'hello',
-        //     id: '43',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622b4616e49de6aci07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '44',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622b46aimciwmcc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '45',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622basomoacmsc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '46',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622basomoacmsc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '47',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '6622basomoacmsc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        //   {
-        //     content: 'hello',
-        //     id: '48',
-        //     receiver: '6622d5b9b523e8c7d0773b96',
-        //     sender: '662askmocwmacmsc9b07b',
-        //     timestamp: 1713600899414,
-        //     type: 'text',
-        //   },
-        // ]);
-        setMessages(messages);
-      });
+      Realm.getMessageList(currentRoom)
+        .then((messages) => {
+          // console.log([
+          //   ...messages,
+          //   {
+          //     content: 'hello',
+          //     id: '43',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622b4616e49de6aci07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '44',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622b46aimciwmcc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '45',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622basomoacmsc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '46',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622basomoacmsc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '47',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622basomoacmsc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '48',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '662askmocwmacmsc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          // ]);
+          // setMessages([
+          //   ...messages,
+          //   {
+          //     content: 'hello',
+          //     id: '43',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622b4616e49de6aci07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '44',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622b46aimciwmcc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '45',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622basomoacmsc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '46',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622basomoacmsc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '47',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '6622basomoacmsc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          //   {
+          //     content: 'hello',
+          //     id: '48',
+          //     receiver: '6622d5b9b523e8c7d0773b96',
+          //     sender: '662askmocwmacmsc9b07b',
+          //     timestamp: 1713600899414,
+          //     type: 'text',
+          //   },
+          // ]);
+          setMessages(messages);
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, [currentRoom]);
 
@@ -154,20 +163,12 @@ const ChatPage: React.FC = () => {
       type,
     };
     setMessages([...messages, newMessage]);
-    console.log(
-      'send message\ncontent:',
-      messageText,
-      'type:',
-      type,
-      'receiver:',
-      currentRoom?.toHexString(),
-      'sender:',
-      Realm.realm?.id
-    );
+    console.log('send message\ncontent:', newMessage);
     Realm.db?.collection('messages').insertOne(newMessage);
   };
 
   const handleSelectRoom = (roomId: ObjectId) => {
+    if (currentRoom === roomId) return;
     setFirstAccess(0);
     setCurrentRoom(null);
     // You might want to clear messages or load messages specific to the selected room
@@ -181,10 +182,10 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-project_black flex h-screen max-h-screen w-screen flex-row">
+    <div className="flex h-screen max-h-screen w-screen flex-row bg-project_black">
       <Sidebar rooms={Realm.chatRooms} onSelectRoom={handleSelectRoom} />
       <div className="flex flex-1 flex-col pb-2 pt-4">
-        <h1 className="text-project_white mb-4 text-center text-3xl font-bold">
+        <h1 className="mb-4 text-center text-3xl font-bold text-project_white">
           Chat Room - {Realm.chatRooms.find((room) => room._id === currentRoom)?.name}
         </h1>
         <div className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
@@ -192,6 +193,7 @@ const ChatPage: React.FC = () => {
             messages={messages}
             fisrtAccess={fisrtAccess}
             setFirstAccess={setFirstAccess}
+            loading={loading}
           />
         </div>
         <div className="justify-self-end px-4">

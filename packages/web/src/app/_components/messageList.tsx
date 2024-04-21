@@ -1,5 +1,7 @@
 'use client';
 
+import loadingAnimation from '@assets/lotties/loading.json';
+import Lottie from 'lottie-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 
@@ -10,9 +12,10 @@ interface Props {
   messages: IMessageProp[];
   fisrtAccess: number;
   setFirstAccess: (value: number) => void;
+  loading: boolean;
 }
 
-const MessageList: React.FC<Props> = ({ messages, fisrtAccess, setFirstAccess }) => {
+const MessageList: React.FC<Props> = ({ messages, fisrtAccess, setFirstAccess, loading }) => {
   const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 
   const [clicked, setClicked] = useState('');
@@ -20,8 +23,6 @@ const MessageList: React.FC<Props> = ({ messages, fisrtAccess, setFirstAccess })
   const scrollToBottom = () => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  useEffect(() => {}, []);
 
   useEffect(() => {
     console.log('fisrtAccess', fisrtAccess);
@@ -51,10 +52,16 @@ const MessageList: React.FC<Props> = ({ messages, fisrtAccess, setFirstAccess })
             />
           );
         })
-      ) : (
+      ) : loading ? (
         <div className="flex h-full w-full flex-col items-center justify-center">
           <HiChatBubbleLeftRight className="mb-4 h-40 w-40 text-gray-200" />
           <div className="select-none text-gray-400">Type somethings to start the conversation</div>
+        </div>
+      ) : (
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          {/* <HiChatBubbleLeftRight className="mb-4 h-40 w-40 text-gray-200" /> */}
+          <Lottie animationData={loadingAnimation} />
+          <div className="select-none text-gray-400">Loading...</div>
         </div>
       )}
       <div ref={endOfMessagesRef} /> {/* Invisible div at the end of the list */}
