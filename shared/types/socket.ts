@@ -1,6 +1,7 @@
 export interface ServerToClientEvents {
   newMessage: (data: ChatData) => void;
-  otherTyping: (whoIsTyping: []) => void;
+  otherTyping: (whoIsTyping: string[]) => void;
+  newActive: (whoIsActive: string[]) => void;
 }
 
 export interface ClientToServerEvents {
@@ -22,7 +23,12 @@ export interface InterServerEvents {
   
 }
 
+export interface RoomData {
+  whoIsTyping: []
+}
+
 export interface SocketData {
   uid: string;
-  username: string;
+  email: string;
+  room: string;
 }
