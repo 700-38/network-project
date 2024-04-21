@@ -31,6 +31,17 @@ const ChatPage: React.FC = () => {
     if (Realm.realm?.isLoggedIn && currentRoom != null) {
       setLoading(true);
       console.log('fetching messages');
+
+      Realm.getChatList().then((rooms) => {
+        if (
+          !rooms
+            .find((room) => currentRoom.equals(room._id))
+            ?.members.includes(Realm.realm?.id || '')
+        ) {
+          router.push('/chat');
+        }
+      });
+
       Realm.getMessageList(currentRoom)
         .then((messages) => {
           console.log('done fetching messages');
@@ -47,6 +58,7 @@ const ChatPage: React.FC = () => {
 
   useEffect(() => {
     const initial = async () => {
+      setLoading(true);
       if (Realm.realm?.isLoggedIn && currentRoom != null) {
         await Realm.getChatList().then((rooms) => {
           const matchRoom = rooms.find((room) => currentRoom.equals(room._id));
@@ -62,6 +74,7 @@ const ChatPage: React.FC = () => {
           }
           setRoomMembers(rooms.find((room) => currentRoom.equals(room._id))?.members || []);
         });
+        setLoading(false);
       }
     };
 

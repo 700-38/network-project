@@ -47,9 +47,12 @@ const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
     setGroupName('');
     setGroupId('');
 
-    await Realm.joinChatRoom(ObjectIdUtilities.createObjectIdFromString(groupId));
-    router.push(`/chat/${groupId}`);
-    modalRef.current?.close();
+    if (!(await Realm.isRoomPrivate(groupId)) && (await Realm.isRoomExist(groupId))) {
+      await Realm.joinChatRoom(ObjectIdUtilities.createObjectIdFromString(groupId));
+      router.push(`/chat/${groupId}`);
+      modalRef.current?.close();
+      return;
+    }
   };
 
   return (

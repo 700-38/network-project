@@ -30,6 +30,8 @@ interface TRealmContext {
   getMessageList: (chatRoomId: ObjectId) => Promise<IMessageProp[]>;
   createChatRoom: (name: string, members: string[]) => Promise<string | null>;
   joinChatRoom: (chatRoomId: ObjectId | null) => void;
+  isRoomPrivate: (roomId: string) => Promise<boolean>;
+  isRoomExist: (roomId: string) => Promise<boolean>;
   isUserExist: (username: string) => Promise<boolean>;
   isIdExist: (id: string) => Promise<boolean>;
   storeMessage: (message: IMessageProp) => void;
@@ -46,6 +48,8 @@ export const RealmContext = createContext<TRealmContext>({
   getMessageList: () => Promise.resolve([]),
   createChatRoom: () => Promise.resolve(''),
   joinChatRoom: () => null,
+  isRoomPrivate: () => Promise.resolve(false),
+  isRoomExist: () => Promise.resolve(false),
   isUserExist: () => Promise.resolve(true),
   isIdExist: () => Promise.resolve(true),
   storeMessage: () => null,
@@ -206,6 +210,36 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
       .updateOne({ _id: chatRoomId }, { $set: { members: Array.from(membersSet) } });
   };
 
+  const isRoomPrivate = async (roomId: string): Promise<boolean> => {
+    if (!realm || !db) {
+      return false;
+    }
+
+    const chatRoom = await db
+      .collection<ChatRoomDoc>('chat')
+      .findOne({ _id: ObjectIdUtilities.createObjectIdFromString(roomId) });
+    if (!chatRoom) {
+      return false;
+    }
+
+    return chatRoom.members.length == 2;
+  };
+
+  const isRoomExist = async (roomId: string): Promise<boolean> => {
+    if (!realm || !db) {
+      return false;
+    }
+
+    const chatRoom = await db
+      .collection<ChatRoomDoc>('chat')
+      .findOne({ _id: ObjectIdUtilities.createObjectIdFromString(roomId) });
+    if (!chatRoom) {
+      return false;
+    }
+
+    return true;
+  };
+
   const storeMessage = async (message: IMessageProp) => {
     if (!realm || !db) {
       return;
@@ -233,6 +267,8 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
         getNameFromId,
         createChatRoom,
         joinChatRoom,
+        isRoomPrivate,
+        isRoomExist,
         isUserExist,
         isIdExist,
         storeMessage,
