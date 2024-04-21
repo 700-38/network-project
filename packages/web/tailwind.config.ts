@@ -19,6 +19,8 @@ const config: Config = {
         project_light_gray: '#848486',
         project_blue: '#1371ff',
         project_dark_blue: '#0f63e1',
+        project_purple: 'rgb(116, 41, 255)', // rgb(164, 4, 255)
+        project_dark_purple: 'rgb(80, 0, 225)',
       },
     },
   },
