@@ -8,6 +8,7 @@ import React, { FC, useContext, useState } from 'react';
 
 import { IMessageProp } from '../../../../../shared/types/message';
 import { stickers } from './stickerModal';
+import UserProfileImage from './userPofileImage';
 
 interface Props {
   prevMessage?: IMessageProp;
@@ -187,12 +188,13 @@ const MessageBubble: FC<Props> = ({
                 thisMessage.type !== 'text') &&
               'opacity-100'
             } rounded-full bg-gray-400 opacity-0 transition-opacity`}>
-            <Image
+            <UserProfileImage name={'A'} size={50} />
+            {/* <Image
               src={`https://placehold.co/400x400.png?text=${'A'}`}
               alt={'A'}
               className="rounded-full"
               width={50}
-              height={50}></Image>
+              height={50}></Image> */}
           </div>
 
           {thisMessage.type === 'text' ? (
