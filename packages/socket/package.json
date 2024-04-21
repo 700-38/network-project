@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "network-project-backend",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
@@ -14,7 +14,7 @@
   "scripts": {
     "start": "ts-node index.ts",
     "build": "tsc",
-    "dev": "nodemon index.ts",
+    "dev": "bun --watch index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "cd ../.. && husky packages/socket/.husky"
   },
