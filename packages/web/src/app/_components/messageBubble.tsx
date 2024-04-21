@@ -4,7 +4,7 @@
 import { RealmContext } from '@/context/realm';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 
 import { IMessageProp } from '../../../../../shared/types/message';
 import { stickers } from './stickerModal';
@@ -26,6 +26,8 @@ const MessageBubble: FC<Props> = ({
   setIsClicked,
 }) => {
   const router = useRouter();
+
+  const [profileName, setProfileName] = useState('');
 
   const Realm = useContext(RealmContext);
   const yourId = Realm.realm?.id || '';
@@ -59,6 +61,14 @@ const MessageBubble: FC<Props> = ({
     // Return the formatted string
     return `${day} ${month.toUpperCase()}`;
   };
+
+  useEffect(() => {
+    if (Realm.realm?.isLoggedIn) {
+      Realm.getNameFromId(thisMessage.sender).then((name) => {
+        setProfileName(name || 'T');
+      });
+    }
+  }, [Realm.realm?.isLoggedIn]);
 
   if (thisMessage.sender === yourId)
     return (
@@ -188,7 +198,7 @@ const MessageBubble: FC<Props> = ({
                 thisMessage.type !== 'text') &&
               'opacity-100'
             } rounded-full bg-gray-400 opacity-0 transition-opacity`}>
-            <UserProfileImage name={'A'} size={50} />
+            <UserProfileImage name={profileName} size={50} />
             {/* <Image
               src={`https://placehold.co/400x400.png?text=${'A'}`}
               alt={'A'}
