@@ -2,6 +2,8 @@ import RealmProvider from '@/context/realm';
 import type { Metadata } from 'next';
 import { Noto_Sans_Thai } from 'next/font/google';
 import React from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import './globals.css';
 
@@ -20,7 +22,10 @@ export default function RootLayout({
   return (
     <RealmProvider>
       <html lang="en">
-        <body className={`bg-project_black ${noto.className}`}>{children}</body>
+        <body className={`bg-project_black ${noto.className}`}>
+          <ToastContainer theme="dark" />
+          {children}
+        </body>
       </html>
     </RealmProvider>
   );
