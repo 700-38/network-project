@@ -4,33 +4,36 @@ import type { ChatRoomDoc, IMessageProp, MessageDoc, ObjectId } from '@shared/ty
 import { get } from 'http';
 import { createContext, useContext, useState } from 'react';
 import type { Dispatch, FC, PropsWithChildren, ReactPortal, SetStateAction } from 'react';
+import React from 'react';
 import * as Realm from 'realm-web';
-import React from 'react'
+
 // import { useState } from 'react';
-const apiKey = "ewtZ3PaQTC1eyah0QfmIlGhZt5dwWQzbzPKEVMzJjbGOH6cLBIIjqLoCXQvYdIdH"
+const apiKey = 'ewtZ3PaQTC1eyah0QfmIlGhZt5dwWQzbzPKEVMzJjbGOH6cLBIIjqLoCXQvYdIdH';
 interface TRealmContext {
   db: globalThis.Realm.Services.MongoDBDatabase | null;
   realm: Realm.User | null;
   chatRooms: ChatRoomDoc[];
-  login: (user: string, password: string) => Promise<void>;
+  registerUser: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   getChatList: () => Promise<ChatRoomDoc[]>;
   getMessageList: (chatRoomId: ObjectId) => Promise<IMessageProp[]>;
   createChatRoom: (name: string, members: string[]) => void;
-  isEmailExist: (email: string) => Promise<boolean>;
+  isUserExist: (username: string) => Promise<boolean>;
 }
-const atlasAppId = "application-0-ahdtpog"
+const atlasAppId = 'application-0-ahdtpog';
 
 export const RealmContext = createContext<TRealmContext>({
   db: null,
   realm: null,
   chatRooms: [],
+  registerUser: () => Promise.resolve(),
   login: () => Promise.resolve(),
   getChatList: () => Promise.resolve([]),
   getMessageList: () => Promise.resolve([]),
   createChatRoom: () => null,
-  isEmailExist: ()=> Promise.resolve(true)
+  isUserExist: () => Promise.resolve(true),
 });
-const publicAtlasApp = (new Realm.App({ id: atlasAppId })).logIn(Realm.Credentials.apiKey(apiKey))
+const publicAtlasApp = new Realm.App({ id: atlasAppId }).logIn(Realm.Credentials.apiKey(apiKey));
 
 const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
   // const { children } = props
@@ -42,19 +45,19 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
   }
   const atlasApp = new Realm.App({ id: atlasAppId });
 
-  const isEmailExist = async (email: string): Promise<boolean> => {
-    const publicUser = await publicAtlasApp
-    const {result} = await publicUser.functions.checkUserExist(email)
-    return result
-  }
+  const isUserExist = async (username: string): Promise<boolean> => {
+    const publicUser = await publicAtlasApp;
+    const { result } = await publicUser.functions.checkUserExist(username);
+    return result;
+  };
 
-  const registerUser = async (email: string, password: string) => {
-    const alreadyExist = await isEmailExist(email)
-    if (alreadyExist) throw new Error('Email already exist')
-    await atlasApp.emailPasswordAuth.registerUser({ email, password }).catch((err) => {
-      console.log(err)
+  const registerUser = async (username: string, password: string) => {
+    const alreadyExist = await isUserExist(username);
+    if (alreadyExist) throw new Error('Username already exist');
+    await atlasApp.emailPasswordAuth.registerUser({ email: username, password }).catch((err) => {
+      console.log(err);
     });
-  }
+  };
 
   const login = async (username: string, password: string) => {
     // await atlasApp.emailPasswordAuth.registerUser({ email: username, password }).catch((err) => {
@@ -63,8 +66,8 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
     const user = await atlasApp.logIn(credentials);
     await setRealm(user);
     await setDB(user.mongoClient('mongodb-atlas').db('network-project'));
-    console.log(user.accessToken)
-    return
+    console.log(user.accessToken);
+    return;
     // getChatList();
   };
 
@@ -72,9 +75,7 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
     if (!realm || !db) {
       throw new Error('Realm or db is not initialized');
     }
-    const chats = await db
-      ?.collection<ChatRoomDoc>('chat')
-      .find({ members: realm.id })
+    const chats = await db?.collection<ChatRoomDoc>('chat').find({ members: realm.id });
     setChatRooms(chats);
     return chats;
   };
@@ -115,7 +116,17 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <RealmContext.Provider
-      value={{ chatRooms, login, realm, db, getChatList, getMessageList, createChatRoom, isEmailExist }}>
+      value={{
+        chatRooms,
+        login,
+        registerUser,
+        realm,
+        db,
+        getChatList,
+        getMessageList,
+        createChatRoom,
+        isUserExist,
+      }}>
       {children}
     </RealmContext.Provider>
   );

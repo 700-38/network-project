@@ -37,7 +37,7 @@ const Sidebar: React.FC<Props> = ({ rooms, currentRoomId, onSelectRoom, openModa
           <div
             key={room._id.toHexString()}
             onClick={() => onSelectRoom(room._id)}
-            className={`flex cursor-pointer flex-row items-center rounded-xl px-4 py-2 text-project_white transition-colors ${room._id == currentRoomId ? 'bg-project_gray' : ''} hover:bg-project_gray`}>
+            className={`flex cursor-pointer flex-row items-center rounded-xl px-4 py-2 text-project_white transition-colors ${currentRoomId && currentRoomId.equals(room._id) ? 'bg-project_gray' : ''} hover:bg-project_gray`}>
             <div>
               <UserProfileImage name={room.name} size={50} />
             </div>
