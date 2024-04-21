@@ -11,7 +11,9 @@ const ChatLandingPage = () => {
   useEffect(() => {
     if (Realm.realm?.isLoggedIn)
       Realm.getChatList().then((rooms) => {
-        router.push(`/chat/${rooms[0]._id}`);
+        if (rooms.length > 0) {
+          router.push(`/chat/${rooms[0]._id}`);
+        }
       });
   }, [Realm.realm?.isLoggedIn]);
 
