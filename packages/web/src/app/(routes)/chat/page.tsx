@@ -186,7 +186,7 @@ const ChatPage: React.FC = () => {
       <Sidebar rooms={Realm.chatRooms} onSelectRoom={handleSelectRoom} />
       <div className="flex flex-1 flex-col pb-2 pt-4">
         <h1 className="mb-4 text-center text-3xl font-bold text-project_white">
-          Chat Room - {Realm.chatRooms.find((room) => room._id === currentRoom)?.name}
+          {Realm.chatRooms.find((room) => room._id === currentRoom)?.name}
         </h1>
         <div className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
           <MessageList

@@ -1,11 +1,11 @@
 'use client';
 
 import loadingAnimation from '@assets/lotties/loading.json';
+import { IMessageProp } from '@shared/types/message';
 import Lottie from 'lottie-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 
-import { IMessageProp } from '../../../../../shared/types/message';
 import MessageBubble from './messageBubble';
 
 interface Props {
