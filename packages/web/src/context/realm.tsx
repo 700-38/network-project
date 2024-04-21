@@ -15,8 +15,10 @@ import React from 'react';
 import * as Realm from 'realm-web';
 
 // import { useState } from 'react';
-const atlasAppId = 'application-0-phbwtop';
-const apiKey = 'uqkKPevpKWLdgUxckOFdb1r2oYg5lAXAlLtcpbbiNxl0HVk1WWjO4LAk0m8ce3jC';
+// const atlasAppId = 'application-0-phbwtop';
+const atlasAppId = 'application-0-ahdtpog';
+// const apiKey = 'uqkKPevpKWLdgUxckOFdb1r2oYg5lAXAlLtcpbbiNxl0HVk1WWjO4LAk0m8ce3jC';
+const apiKey = 'ewtZ3PaQTC1eyah0QfmIlGhZt5dwWQzbzPKEVMzJjbGOH6cLBIIjqLoCXQvYdIdH';
 interface TRealmContext {
   db: globalThis.Realm.Services.MongoDBDatabase | null;
   realm: Realm.User | null;
@@ -72,7 +74,7 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
     const publicUser = await publicAtlasApp;
     const db = await publicUser.mongoClient('mongodb-atlas').db('network-project');
     const users = db.collection<UserDoc>('users');
-    const result = await users.findOne({ _id: id });
+    const result = await users.findOne({ uid: id });
     return result !== null;
   };
 
@@ -105,11 +107,13 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
     // const db = await user.mongoClient('mongodb-atlas').db('network-project');
 
     const users = db.collection<UserDoc>('users');
-    console.log(await users.find());
-    await users.insertOne({
-      _id: user.id,
-      name: username,
-    });
+    // console.log(await users.find());
+    await users.findOneAndUpdate(
+      { uid: user.id },
+      {
+        $set: { name: username },
+      }
+    );
 
     // getChatList();
   };
@@ -144,7 +148,7 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
 
     return await db
       .collection<UserDoc>('users')
-      .findOne({ _id: id })
+      .findOne({ uid: id })
       .then((user) => {
         return user ? user.name : null;
       });
