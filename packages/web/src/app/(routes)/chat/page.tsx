@@ -1,7 +1,8 @@
 'use client';
 
+import CreateRoomDialog from '@/app/_components/createRoomDialog';
 import { ChatRoomDoc, IMessageProp, ObjectId } from '@shared/types/message';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { RealmContext } from '../../../context/realm';
 import InputBox from '../../_components/inputBox';
@@ -20,6 +21,9 @@ const ChatPage: React.FC = () => {
   const [currentRoom, setCurrentRoom] = useState<ObjectId | null>(null);
   const [fisrtAccess, setFirstAccess] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  const modalRef = useRef<HTMLDialogElement | null>(null);
+
   useEffect(() => {
     Realm.login('ironpan21@gmail.com', '123456');
   }, []);
@@ -181,9 +185,20 @@ const ChatPage: React.FC = () => {
     setCurrentRoom(roomId);
   };
 
+  const openModal = () => {
+    modalRef.current?.showModal();
+  };
+
   return (
     <div className="flex h-screen max-h-screen w-screen flex-row bg-project_black">
-      <Sidebar rooms={Realm.chatRooms} onSelectRoom={handleSelectRoom} />
+      <CreateRoomDialog modalRef={modalRef} />
+
+      <Sidebar
+        rooms={Realm.chatRooms}
+        onSelectRoom={handleSelectRoom}
+        openModal={openModal}
+        currentRoomId={currentRoom}
+      />
       <div className="flex flex-1 flex-col pb-2 pt-4">
         <h1 className="mb-4 text-center text-3xl font-bold text-project_white">
           {Realm.chatRooms.find((room) => room._id === currentRoom)?.name}
