@@ -1,4 +1,7 @@
-import { FC, useState } from 'react';
+import { RealmContext } from '@/context/realm';
+import { ObjectIdUtilities } from '@shared/types/message';
+import { useRouter } from 'next/navigation';
+import { FC, useContext, useState } from 'react';
 
 import NameChipsInput from './nameChipsInput';
 
@@ -7,11 +10,36 @@ interface CreateRoomDialogProps {
 }
 
 const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
+  const Realm = useContext(RealmContext);
+  const router = useRouter();
+
   const [names, setNames] = useState<string[]>([]); // State to hold the list of names
   const [currentName, setCurrentName] = useState<string>(''); // State to hold the current input
 
   const [groupName, setGroupName] = useState<string>('');
   const [groupId, setGroupId] = useState<string>('');
+
+  const createChat = async () => {
+    if (names.length == 1) {
+      const newChatId = await Realm.createChatRoom(
+        (await Realm.getNameFromId(names[0])) || 'Chat',
+        names
+      );
+      // console.log(newChat);
+      router.push(`/chat/${newChatId}`);
+      modalRef.current?.close();
+    } else {
+      const newChatId = await Realm.createChatRoom(groupName, names);
+      // console.log(newChat);
+      router.push(`/chat/${newChatId}`);
+      modalRef.current?.close();
+    }
+  };
+
+  const joinChat = async () => {
+    await Realm.joinChatRoom(ObjectIdUtilities.createObjectIdFromString(groupId));
+    router.push(`/chat/${groupId}`);
+  };
 
   return (
     <>
@@ -20,7 +48,7 @@ const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
         ref={modalRef}>
         <div className="modal-box flex w-full flex-col rounded-xl border-[1px] border-project_white bg-project_black">
           <form method="dialog" className="w-4">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
           </form>
 
           <div className="flex flex-col gap-2">
@@ -41,7 +69,7 @@ const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
               )}
 
               <div className="text-project_white">
-                Enter the names of the people you want to chat with:
+                Enter the ids of the people you want to chat with:
               </div>
               <NameChipsInput
                 names={names}
@@ -52,8 +80,11 @@ const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
 
               {(names.length == 1 || (names.length > 1 && groupName)) && (
                 <div className="flex w-full items-center justify-center">
-                  <div className="rounded-full bg-project_dark_blue px-16 py-2 text-project_white">
-                    Create Chat Group
+                  <div
+                    className="rounded-full bg-project_dark_blue px-16 py-2 text-project_white"
+                    onClick={createChat}>
+                    {names.length == 1 && 'Create Private Chat'}
+                    {names.length > 1 && 'Create Chat Group'}
                   </div>
                 </div>
               )}
@@ -73,7 +104,9 @@ const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
             />
             {groupId && (
               <div className="flex w-full items-center justify-center">
-                <div className="rounded-full bg-project_dark_blue px-16 py-2 text-project_white">
+                <div
+                  className="rounded-full bg-project_dark_blue px-16 py-2 text-project_white"
+                  onClick={joinChat}>
                   Join Chat Group
                 </div>
               </div>

@@ -1,4 +1,5 @@
-import React, { Dispatch, FC, SetStateAction, useState } from 'react';
+import { RealmContext } from '@/context/realm';
+import React, { Dispatch, FC, SetStateAction, useContext, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
 
 interface NameChipsInputProps {
@@ -14,16 +15,18 @@ const NameChipsInput: FC<NameChipsInputProps> = ({
   currentName,
   setCurrentName,
 }) => {
+  const Realm = useContext(RealmContext);
+
   // Function to handle input change
   const handleInputChange = (event: { target: { value: React.SetStateAction<string> } }) => {
     setCurrentName(event.target.value);
   };
 
   // Function to handle form submission
-  const handleFormSubmit = (event: { preventDefault: () => void }) => {
+  const handleFormSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     const trimmedName = currentName.trim();
-    if (trimmedName && !names.includes(trimmedName)) {
+    if (trimmedName && !names.includes(trimmedName) && (await Realm.isIdExist(trimmedName))) {
       // Prevent adding empty names
       setNames([...names, currentName.trim()]); // Add the trimmed name to the names array
       console.log('Added name: ' + trimmedName);
@@ -62,7 +65,7 @@ const NameChipsInput: FC<NameChipsInputProps> = ({
             value={currentName}
             onChange={handleInputChange}
             className="w-fit bg-transparent text-project_white outline-none"
-            placeholder="Enter the names"
+            placeholder="Enter the ids"
           />
         </div>
       </form>

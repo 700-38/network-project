@@ -26,8 +26,10 @@ interface TRealmContext {
   getChatList: () => Promise<ChatRoomDoc[]>;
   getNameFromId: (id: string) => Promise<string | null>;
   getMessageList: (chatRoomId: ObjectId) => Promise<IMessageProp[]>;
-  createChatRoom: (name: string, members: string[]) => void;
+  createChatRoom: (name: string, members: string[]) => Promise<string | null>;
+  joinChatRoom: (chatRoomId: ObjectId | null) => void;
   isUserExist: (username: string) => Promise<boolean>;
+  isIdExist: (id: string) => Promise<boolean>;
 }
 
 export const RealmContext = createContext<TRealmContext>({
@@ -39,8 +41,10 @@ export const RealmContext = createContext<TRealmContext>({
   getChatList: () => Promise.resolve([]),
   getNameFromId: () => Promise.resolve(''),
   getMessageList: () => Promise.resolve([]),
-  createChatRoom: () => null,
+  createChatRoom: () => Promise.resolve(''),
+  joinChatRoom: () => null,
   isUserExist: () => Promise.resolve(true),
+  isIdExist: () => Promise.resolve(true),
 });
 const publicAtlasApp = new Realm.App({ id: atlasAppId }).logIn(Realm.Credentials.apiKey(apiKey));
 
@@ -59,6 +63,14 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
     const db = await publicUser.mongoClient('mongodb-atlas').db('network-project');
     const users = db.collection<UserDoc>('users');
     const result = await users.findOne({ name: { $regex: `^${username}$`, $options: 'i' } });
+    return result !== null;
+  };
+
+  const isIdExist = async (id: string): Promise<boolean> => {
+    const publicUser = await publicAtlasApp;
+    const db = await publicUser.mongoClient('mongodb-atlas').db('network-project');
+    const users = db.collection<UserDoc>('users');
+    const result = await users.findOne({ _id: id });
     return result !== null;
   };
 
@@ -147,14 +159,40 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
       members: Array.from(membersSet),
       lastMessage: null,
     };
-    db.collection<ChatRoomDoc>('chat')
+    const newChat = await db
+      .collection<ChatRoomDoc>('chat')
       .insertOne(chatRoom)
       .then((chatRoom) => {
         console.log(chatRoom);
+        return chatRoom;
       })
       .catch((err) => {
         console.error(err);
+        return null;
       });
+
+    return newChat ? newChat.insertedId.toString() : null;
+  };
+
+  const joinChatRoom = async (chatRoomId: ObjectId | null) => {
+    if (!realm || !db) {
+      return;
+    }
+
+    if (!chatRoomId) {
+      return;
+    }
+
+    const chatRoom = await db.collection<ChatRoomDoc>('chat').findOne({ _id: chatRoomId });
+    if (!chatRoom) {
+      return;
+    }
+    const members = chatRoom.members;
+    members.push(realm.id);
+    const membersSet = new Set(members);
+    await db
+      .collection<ChatRoomDoc>('chat')
+      .updateOne({ _id: chatRoomId }, { $set: { members: Array.from(membersSet) } });
   };
 
   return (
@@ -169,7 +207,9 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
         getMessageList,
         getNameFromId,
         createChatRoom,
+        joinChatRoom,
         isUserExist,
+        isIdExist,
       }}>
       {children}
     </RealmContext.Provider>

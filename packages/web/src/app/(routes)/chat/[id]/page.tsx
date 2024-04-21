@@ -12,7 +12,7 @@ const ChatPage: React.FC = () => {
   let { id } = useParams<{ id: string }>();
   const router = useRouter();
 
-  const [roomName, setRoomName] = useState<string>('');
+  const [roomName, setRoomName] = useState<string>('Chat');
   const [roomMembers, setRoomMembers] = useState<string[]>([]);
   const [messages, setMessages] = useState<IMessageProp[]>([]);
   const [fisrtAccess, setFirstAccess] = useState(0);
@@ -45,7 +45,17 @@ const ChatPage: React.FC = () => {
     const initial = async () => {
       if (Realm.realm?.isLoggedIn && currentRoom != null) {
         await Realm.getChatList().then((rooms) => {
-          setRoomName(rooms.find((room) => currentRoom.equals(room._id))?.name || '');
+          const matchRoom = rooms.find((room) => currentRoom.equals(room._id));
+          if (matchRoom != null) {
+            if (matchRoom.members.length > 2) {
+              setRoomName(matchRoom.name);
+            } else {
+              const otherId = matchRoom.members.find((member) => member !== Realm.realm?.id) || '';
+              Realm.getNameFromId(otherId).then((name) => {
+                setRoomName(name || 'Chat');
+              });
+            }
+          }
           setRoomMembers(rooms.find((room) => currentRoom.equals(room._id))?.members || []);
         });
       }
