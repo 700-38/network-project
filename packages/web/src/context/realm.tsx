@@ -190,6 +190,11 @@ const RealmProvider: FC<PropsWithChildren> = ({ children }) => {
       return;
     }
     const members = chatRoom.members;
+
+    if (members.length == 2) {
+      return;
+    }
+
     members.push(realm.id);
     const membersSet = new Set(members);
     await db
