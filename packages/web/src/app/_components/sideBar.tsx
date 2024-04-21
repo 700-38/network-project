@@ -59,7 +59,7 @@ const Sidebar: React.FC<Props> = ({ rooms, currentRoomId, onSelectRoom, openModa
   }, [rooms]);
 
   return (
-    <div className="flex w-64 flex-col border-r-2 border-solid border-project_gray bg-project_black p-4">
+    <div className="flex w-72 flex-col border-r-2 border-solid border-project_gray bg-project_black p-4">
       <div className="flex flex-row items-center justify-between">
         <h2 className="text-lg font-semibold text-project_white">Chats</h2>
         <div
@@ -81,7 +81,12 @@ const Sidebar: React.FC<Props> = ({ rooms, currentRoomId, onSelectRoom, openModa
             <div className="flex flex-col justify-start px-4">
               <div className="cursor-pointer">{room.realName}</div>
               <div className="text-project_light_gray">
-                {Realm.realm?.id == room.lastMessage?.sender && 'You:'} {room.lastMessage?.content}
+                {Realm.realm?.id == room.lastMessage?.sender && 'You:'}{' '}
+                {room.lastMessage?.type == 'text'
+                  ? room.lastMessage?.content
+                  : Realm.realm?.id == room.lastMessage?.sender
+                    ? 'Sent Emoji'
+                    : 'Recieve Emoji'}
               </div>
             </div>
           </div>
