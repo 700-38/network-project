@@ -1,12 +1,14 @@
 'use client';
-import dynamic from 'next/dynamic';
+
 import loadingAnimation from '@assets/lotties/loading.json';
 import { IMessageProp } from '@shared/types/message';
-const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
+import dynamic from 'next/dynamic';
 import React, { useEffect, useRef, useState } from 'react';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 
 import MessageBubble from './messageBubble';
+
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 interface Props {
   messages: IMessageProp[];
@@ -52,7 +54,7 @@ const MessageList: React.FC<Props> = ({ messages, fisrtAccess, setFirstAccess, l
             />
           );
         })
-      ) : loading ? (
+      ) : !loading ? (
         <div className="flex h-full w-full flex-col items-center justify-center">
           <HiChatBubbleLeftRight className="mb-4 h-40 w-40 text-gray-200" />
           <div className="select-none text-gray-400">Type somethings to start the conversation</div>
