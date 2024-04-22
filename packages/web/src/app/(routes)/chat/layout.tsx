@@ -25,6 +25,7 @@ export default function RootLayout({
 
   const [currentRoom, setCurrentRoom] = useState<ObjectId | null>(null);
   const [rooms, setRooms] = useState<ChatRoomDoc[]>([]);
+  const [activeRooms, setActiveRooms] = useState<string[]>([]);
 
   const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
 
@@ -82,14 +83,40 @@ export default function RootLayout({
         },
       });
 
-      socketRef.current?.emit('joinChat', currentRoom?.toString() || '');
+      // socketRef.current?.emit('joinChat', currentRoom?.toString() || '');
 
-      socketRef.current.on('newMessage', async (msg) => {
-        await Realm.getChatList().then((rooms) => {
-          setRooms(rooms);
+      socketRef.current.on('notify', async (notifiedUsers) => {
+        if (notifiedUsers.includes(Realm.realm?.id || '')) {
+          console.log('notify');
+          await Realm.getChatList().then((rooms) => {
+            setRooms(rooms);
+          });
+        }
+      });
+
+      socketRef.current.on('online', (chatRoomId) => {
+        const newRoomId = ObjectIdUtilities.createObjectIdFromString(chatRoomId);
+
+        if (newRoomId == null) return;
+
+        console.log('New Online', chatRoomId);
+
+        setActiveRooms((activeRooms) => {
+          // Using a map to avoid duplicates, assuming ObjectId.toString() gives unique strings
+          const roomMap = new Map(activeRooms.map((room) => [room.toString(), room]));
+          roomMap.set(newRoomId.toString(), chatRoomId);
+          return Array.from(roomMap.values());
         });
+      });
 
-        console.log('get chat list success');
+      socketRef.current.on('offline', (chatRoomId) => {
+        const roomIdToRemove = ObjectIdUtilities.createObjectIdFromString(chatRoomId);
+
+        if (roomIdToRemove == null) return;
+
+        console.log('New Offline', chatRoomId);
+
+        setActiveRooms((activeRooms) => activeRooms.filter((room) => room !== chatRoomId));
       });
 
       return () => {
@@ -120,6 +147,7 @@ export default function RootLayout({
         onSelectRoom={handleSelectRoom}
         openModal={openModal}
         currentRoomId={currentRoom}
+        activeRooms={activeRooms}
       />
       <>{children}</>
     </div>

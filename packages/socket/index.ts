@@ -38,6 +38,10 @@ io.on('connection', (socket) => {
       whoIsActive.get(socket.data.room)?.filter((uid) => uid !== socket.data.uid) || []
     );
     io.to(socket.data.room).emit('newActive', whoIsActive.get(socket.data.room) || []);
+
+    if (whoIsActive.get(socket.data.room)?.length === 0) {
+      io.emit('offline', socket.data.room);
+    }
   });
   // whoIsActive.
   socket.on('joinChat', (chatId: string) => {
@@ -51,6 +55,7 @@ io.on('connection', (socket) => {
     // activeUser.
     whoIsActive.set(chatId, activeUser);
     io.to(chatId).emit('newActive', activeUser);
+    io.emit('online', chatId);
   });
   socket.on('userTyping', (isTyping: boolean) => {
     // const roomData = io.sockets.adapter.rooms.get(socket.data.room)
@@ -90,6 +95,7 @@ io.on('connection', (socket) => {
         if (!chat) return;
         const members = chat.members;
         // const room = socket.
+        io.emit('notify', chat.members);
         io.to(socket.data.room).emit('newMessage', message);
         members
           .filter((m) => !whoIsActive.get(socket.data.room)?.includes(m))

@@ -1,5 +1,8 @@
 import type { IMessageProp } from './message';
 export interface ServerToClientEvents {
+  notify: (whoIsNotified: string[]) => void;
+  online: (whicRoomIsOnline: string) => void;
+  offline: (whicRoomIsOffline: string) => void;
   newMessage: (data: IMessageProp) => void;
   otherTyping: (whoIsTyping: string[]) => void;
   newActive: (whoIsActive: string[]) => void;
