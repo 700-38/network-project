@@ -65,7 +65,7 @@ const MessageBubble: FC<Props> = ({
   useEffect(() => {
     if (Realm.realm?.isLoggedIn) {
       Realm.getNameFromId(thisMessage.sender).then((name) => {
-        setProfileName(name || 'T');
+        setProfileName(name || '404');
       });
     }
   }, [Realm.realm?.isLoggedIn]);
@@ -76,10 +76,10 @@ const MessageBubble: FC<Props> = ({
         className={`mb-1 flex flex-col items-center justify-center transition-[padding] duration-300 ${
           isClicked === thisMessage.id
             ? 'pb-4'
-            : nextMessage &&
-              nextMessage.sender === yourId &&
-              nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 2 &&
-              'pb-2'
+            : (nextMessage &&
+                nextMessage.sender === yourId &&
+                nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 2) ||
+              (nextMessage && thisMessage.type !== nextMessage.type && 'pb-2')
         }`}>
         {/* Date time */}
         <div
@@ -141,7 +141,7 @@ const MessageBubble: FC<Props> = ({
           ) : (
             <div className={`flex w-full justify-end text-6xl`}>
               <div
-                className="my-2"
+                className="mt-4"
                 onClick={() => {
                   setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                   console.log(thisMessage, prevMessage, nextMessage);
@@ -195,7 +195,7 @@ const MessageBubble: FC<Props> = ({
                 nextMessage.sender !== thisMessage.sender ||
                 isClicked === thisMessage.id ||
                 nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 2 ||
-                thisMessage.type !== 'text') &&
+                nextMessage.id === isClicked) &&
               'opacity-100'
             } rounded-full bg-gray-400 opacity-0 transition-opacity`}>
             <UserProfileImage name={profileName} size={50} />
@@ -206,61 +206,62 @@ const MessageBubble: FC<Props> = ({
               width={50}
               height={50}></Image> */}
           </div>
-
-          {thisMessage.type === 'text' ? (
+          <div>
             <div
-              className={`transition-all duration-300 ${
-                prevMessage &&
-                prevMessage.sender === thisMessage.sender &&
-                thisMessage.timestamp - prevMessage.timestamp <= 1000 * 60 * 2 && // 15 mins
-                isClicked !== thisMessage.id &&
-                prevMessage.type === 'text' &&
-                isClicked !== prevMessage.id
-                  ? 'rounded-tl-md'
-                  : 'rounded-tl-3xl'
-              } 
+              className={`${
+                !(
+                  prevMessage &&
+                  prevMessage.sender === thisMessage.sender &&
+                  isClicked !== thisMessage.id &&
+                  isClicked !== prevMessage.id
+                )
+                  ? 'h-6'
+                  : 'h-0 opacity-0'
+              } text-project_light_gray transition-[opacity,height]`}>
+              {profileName}
+            </div>
+            {thisMessage.type === 'text' ? (
+              <div
+                className={`transition-all duration-300 ${
+                  prevMessage &&
+                  prevMessage.sender === thisMessage.sender &&
+                  thisMessage.timestamp - prevMessage.timestamp <= 1000 * 60 * 2 && // 15 mins
+                  isClicked !== thisMessage.id &&
+                  prevMessage.type === 'text' &&
+                  isClicked !== prevMessage.id
+                    ? 'rounded-tl-md'
+                    : 'rounded-tl-3xl'
+                } 
             ${
               nextMessage &&
               nextMessage.sender === thisMessage.sender &&
-              nextMessage.timestamp - thisMessage.timestamp <= 1000 * 60 * 15 && // 15 mins
+              nextMessage.timestamp - thisMessage.timestamp <= 1000 * 60 * 2 && // 15 mins
               isClicked !== thisMessage.id &&
               nextMessage.type === 'text' &&
               isClicked !== nextMessage.id
                 ? 'rounded-bl-md'
                 : 'rounded-bl-3xl'
             } 
-            min-w-[30px] ${isClicked === thisMessage.id ? 'bg-project_dark_purple' : 'bg-project_purple'} max-w-[400px] whitespace-pre-wrap break-words rounded-r-3xl px-3.5 py-2 text-start text-project_white`}
-              onClick={() => {
-                setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
-                console.log(thisMessage, prevMessage, nextMessage);
-                // console.log(
-                //   prevMessage && 'prevMessage\n',
-                //   prevMessage &&
-                //     prevMessage.sender !== thisMessage.sender &&
-                //     'prevMessage.sender !== thisMessage.sender\n',
-                //   prevMessage &&
-                //     thisMessage.timestamp - prevMessage.timestamp <= 1000 * 60 * 15 &&
-                //     'thisMessage.timestamp - prevMessage.timestamp <= 1000 * 60 * 15 \n', // 15 mins
-                //   isClicked !== thisMessage.id && 'isClicked !== thisMessage.id\n',
-                //   prevMessage && prevMessage.type === 'text' && 'prevMessage.type === "text"\n',
-                //   prevMessage && isClicked !== prevMessage.id && 'isClicked !== prevMessage.id\n'
-                // );
-                console.log(prevMessage && prevMessage.sender !== thisMessage.sender);
-              }}>
-              {thisMessage.content}
-            </div>
-          ) : (
-            <div className={`flex w-full justify-start text-6xl`}>
-              <div
-                className="my-2"
+            w-fit min-w-[30px] ${isClicked === thisMessage.id ? 'bg-project_dark_purple' : 'bg-project_purple'} max-w-[400px] whitespace-pre-wrap break-words rounded-r-3xl px-3.5 py-2 text-start text-project_white`}
                 onClick={() => {
                   setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                   console.log(thisMessage, prevMessage, nextMessage);
                 }}>
-                {stickers[parseInt(thisMessage.content)]}
+                {thisMessage.content}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className={`flex w-full justify-start text-6xl`}>
+                <div
+                  className="mt-4"
+                  onClick={() => {
+                    setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
+                    console.log(thisMessage, prevMessage, nextMessage);
+                  }}>
+                  {stickers[parseInt(thisMessage.content)]}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
