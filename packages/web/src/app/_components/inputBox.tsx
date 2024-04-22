@@ -1,20 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
+import { ClientToServerEvents, ServerToClientEvents } from '@shared/types/socket';
+import React, { useEffect, useRef, useState } from 'react';
 import { BiSticker } from 'react-icons/bi';
 import { IoSend } from 'react-icons/io5';
 import { RiEmojiStickerFill } from 'react-icons/ri';
+import { Socket } from 'socket.io-client';
 
 import StickerModal from './stickerModal';
 
 interface Props {
   onSendMessage: (message: string, type: string) => void;
+  socketTyping: (bool: boolean) => void;
 }
 
-const InputBox: React.FC<Props> = ({ onSendMessage }) => {
+const InputBox: React.FC<Props> = ({ onSendMessage, socketTyping }) => {
   const [input, setInput] = useState('');
   const [isHovering, setIsHovering] = useState(false); // State to track hovering
   const [isStickerModalOpen, setIsStickerModalOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
@@ -22,7 +26,7 @@ const InputBox: React.FC<Props> = ({ onSendMessage }) => {
 
   const handleSend = () => {
     if (input.trim()) {
-      onSendMessage(input, 'text');
+      onSendMessage(input.trim(), 'text');
       setInput('');
     }
   };
@@ -50,8 +54,18 @@ const InputBox: React.FC<Props> = ({ onSendMessage }) => {
     setIsStickerModalOpen(false);
   };
 
+  useEffect(() => {
+    if (input.trim().length > 0 && isTyping === false) {
+      setIsTyping(true);
+      socketTyping(true);
+    } else if (input.trim().length === 0 && isTyping === true) {
+      setIsTyping(false);
+      socketTyping(false);
+    }
+  }, [input, isTyping]);
+
   return (
-    <div className="flex">
+    <div className="flex pt-2">
       <input
         type="text"
         value={input}

@@ -1,4 +1,7 @@
 @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 
 /* project_black: '#1d1e20',
 project_white: '#ffffff',
@@ -26,5 +29,13 @@ project_light_gray: '#848486', */
   /* border: 1px solid red */
 }
 
-@tailwind components;
-@tailwind utilities;
+@keyframes bouncing-loader {
+  to {
+    opacity: 0.1;
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bouncing-loader {
+  animation: bouncing-loader 0.6s infinite alternate;
+}

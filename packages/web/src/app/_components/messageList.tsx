@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 
 import MessageBubble from './messageBubble';
+import MessageTyping from './messageTyping';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
@@ -15,9 +16,18 @@ interface Props {
   fisrtAccess: number;
   setFirstAccess: (value: number) => void;
   loading: boolean;
+  userTyping: string[];
+  roomMembers: string[];
 }
 
-const MessageList: React.FC<Props> = ({ messages, fisrtAccess, setFirstAccess, loading }) => {
+const MessageList: React.FC<Props> = ({
+  messages,
+  fisrtAccess,
+  setFirstAccess,
+  loading,
+  userTyping,
+  roomMembers,
+}) => {
   const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 
   const [clicked, setClicked] = useState('');
@@ -66,6 +76,7 @@ const MessageList: React.FC<Props> = ({ messages, fisrtAccess, setFirstAccess, l
           <div className="select-none text-gray-400">Loading...</div>
         </div>
       )}
+      <MessageTyping roomMembers={roomMembers} userTyping={userTyping} />
       <div ref={endOfMessagesRef} /> {/* Invisible div at the end of the list */}
     </div>
   );

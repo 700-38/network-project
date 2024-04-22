@@ -85,22 +85,19 @@ const Sidebar: React.FC<Props> = ({
           <div
             key={room._id.toHexString()}
             onClick={() => onSelectRoom(room._id)}
-            className={`flex cursor-pointer flex-row items-center rounded-xl px-4 py-2 text-project_white transition-colors ${currentRoomId && currentRoomId.equals(room._id) ? 'bg-project_gray' : ''} hover:bg-project_gray`}>
+            className={`mb-2 flex cursor-pointer flex-row items-center rounded-xl px-4 py-2 text-project_white transition-colors ${currentRoomId && currentRoomId.equals(room._id) ? 'bg-project_gray' : ''} hover:bg-project_gray`}>
             <div>
               <UserProfileImage name={room.realName} size={50} />
             </div>
-            <div className="flex flex-col justify-start px-4">
+            <div className="flex w-full flex-col justify-start px-4">
               <div className="flex flex-row justify-between">
                 <div className="cursor-pointer">{room.realName}</div>
 
-                {activeRooms.includes(room._id.toString()) ? (
-                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                ) : (
-                  <div className="h-2 w-2 rounded-full bg-project_light_gray"></div>
-                )}
+                <div
+                  className={`h-2 w-2 rounded-full transition-colors ${activeRooms.includes(room._id.toString()) ? 'bg-green-500' : 'bg-project_light_gray'}`}></div>
               </div>
 
-              <div className="text-project_light_gray">
+              <div className="max-w-[140px] truncate whitespace-nowrap text-project_light_gray">
                 {Realm.realm?.id == room.lastMessage?.sender && 'You:'}{' '}
                 {room.lastMessage?.type == 'text'
                   ? room.lastMessage?.content

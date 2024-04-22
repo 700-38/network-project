@@ -19,6 +19,7 @@ const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Array<IMessageProp>>([]);
   const [fisrtAccess, setFirstAccess] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [userTyping, setUserTyping] = useState<string[]>([]);
 
   const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
 
@@ -107,6 +108,15 @@ const ChatPage: React.FC = () => {
         // setMessages(() => [...messages, msg]);
       });
 
+      socketRef.current.on('otherTyping', (msg) => {
+        console.log('otherTyping', msg);
+        setUserTyping(msg);
+        // console.log('newMessage', msg);
+        // console.log('previousMessage', messages);
+        // console.log([...messages, msg]);
+        // setMessages(() => [...messages, msg]);
+      });
+
       return () => {
         if (socketRef.current) {
           socketRef.current.disconnect();
@@ -120,6 +130,14 @@ const ChatPage: React.FC = () => {
     console.log('New message', msg);
     if (msg.receiver !== currentRoom?.toHexString()) return;
     setMessages((messages) => [...messages, msg]);
+  };
+
+  const socketTyping = (bool: boolean) => {
+    if (!socketRef.current) {
+      console.log('socket not found');
+      return;
+    }
+    socketRef.current.emit('userTyping', bool);
   };
 
   const handleSendMessage = async (messageText: string, type: string) => {
@@ -150,10 +168,12 @@ const ChatPage: React.FC = () => {
           fisrtAccess={fisrtAccess}
           setFirstAccess={setFirstAccess}
           loading={loading}
+          userTyping={userTyping}
+          roomMembers={roomMembers}
         />
       </div>
       <div className="justify-self-end px-4">
-        <InputBox onSendMessage={handleSendMessage} />
+        <InputBox onSendMessage={handleSendMessage} socketTyping={socketTyping} />
       </div>
     </div>
   );

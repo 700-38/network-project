@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import React, { FC, useContext, useEffect, useState } from 'react';
 
 import { IMessageProp } from '../../../../../shared/types/message';
+import BouncingDotsLoader from './bouncingDotsLoader';
 import { stickers } from './stickerModal';
 import UserProfileImage from './userPofileImage';
 
@@ -31,9 +32,6 @@ const MessageBubble: FC<Props> = ({
 
   const Realm = useContext(RealmContext);
   const yourId = Realm.realm?.id || '';
-  if (yourId === '') {
-    router.push('/login');
-  }
   const formatDaysAgo = (daysAgo: number, date: number): string => {
     if (daysAgo <= 0) {
       return 'Invalid input, daysAgo should be a positive integer';
@@ -136,7 +134,13 @@ const MessageBubble: FC<Props> = ({
                 setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                 console.log(thisMessage, prevMessage, nextMessage);
               }}>
-              {thisMessage.content}
+              <p
+                onClick={() => {
+                  setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
+                  console.log(thisMessage, prevMessage, nextMessage);
+                }}>
+                {thisMessage.content.trim()}
+              </p>
             </div>
           ) : (
             <div className={`flex w-full justify-end text-6xl`}>
@@ -146,7 +150,7 @@ const MessageBubble: FC<Props> = ({
                   setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                   console.log(thisMessage, prevMessage, nextMessage);
                 }}>
-                {stickers[parseInt(thisMessage.content)]}
+                {stickers[parseInt(thisMessage.content.trim())]}
               </div>
             </div>
           )}
@@ -194,11 +198,14 @@ const MessageBubble: FC<Props> = ({
               (!nextMessage ||
                 nextMessage.sender !== thisMessage.sender ||
                 isClicked === thisMessage.id ||
-                nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 2 ||
+                nextMessage.timestamp - thisMessage.timestamp > 1000 * 60 * 15 ||
                 nextMessage.id === isClicked) &&
               'opacity-100'
             } rounded-full bg-gray-400 opacity-0 transition-opacity`}>
-            <UserProfileImage name={profileName} size={50} />
+            <UserProfileImage
+              name={profileName.slice(0, 1).toLocaleUpperCase() + profileName.slice(1)}
+              size={50}
+            />
             {/* <Image
               src={`https://placehold.co/400x400.png?text=${'A'}`}
               alt={'A'}
@@ -247,7 +254,13 @@ const MessageBubble: FC<Props> = ({
                   setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                   console.log(thisMessage, prevMessage, nextMessage);
                 }}>
-                {thisMessage.content}
+                <p
+                  onClick={() => {
+                    setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
+                    console.log(thisMessage, prevMessage, nextMessage);
+                  }}>
+                  {thisMessage.content.trim()}
+                </p>
               </div>
             ) : (
               <div className={`flex w-full justify-start text-6xl`}>
@@ -257,7 +270,7 @@ const MessageBubble: FC<Props> = ({
                     setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                     console.log(thisMessage, prevMessage, nextMessage);
                   }}>
-                  {stickers[parseInt(thisMessage.content)]}
+                  {stickers[parseInt(thisMessage.content.trim())]}
                 </div>
               </div>
             )}
