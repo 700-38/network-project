@@ -2,13 +2,10 @@
 'use client';
 
 import { RealmContext } from '@/context/realm';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { FC, useContext, useEffect, useState } from 'react';
 
-import { IMessageProp } from '../../../../../shared/types/message';
 import BouncingDotsLoader from './bouncingDotsLoader';
-import { stickers } from './stickerModal';
 import UserProfileImage from './userPofileImage';
 
 interface Props {
@@ -88,7 +85,6 @@ const MessageTyping: FC<Props> = ({ userTyping, roomMembers }) => {
   return (
     <>
       {allNames.map((user) => {
-        console.log('render typing', user);
         return (
           <div
             key={user.id}
