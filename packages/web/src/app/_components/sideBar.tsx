@@ -87,11 +87,13 @@ const Sidebar: React.FC<Props> = ({
             onClick={() => onSelectRoom(room._id)}
             className={`mb-2 flex cursor-pointer flex-row items-center rounded-xl px-4 py-2 text-project_white transition-colors ${currentRoomId && currentRoomId.equals(room._id) ? 'bg-project_gray' : ''} hover:bg-project_gray`}>
             <div>
-              <UserProfileImage name={room.realName} size={50} />
+              <UserProfileImage name={room.realName} size={50} group={room.members.length > 2} />
             </div>
             <div className="flex w-full flex-col justify-start px-4">
               <div className="flex flex-row justify-between">
-                <div className="cursor-pointer">{room.realName}</div>
+                <div className="cursor-pointer">
+                  {room.realName} {room.members.length > 2 && `(${room.members.length})`}
+                </div>
 
                 <div
                   className={`h-2 w-2 rounded-full transition-colors ${activeRooms.includes(room._id.toString()) ? 'bg-green-500' : 'bg-project_light_gray'}`}></div>
