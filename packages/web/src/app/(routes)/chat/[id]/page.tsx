@@ -119,6 +119,7 @@ const ChatPage: React.FC = () => {
 
       return () => {
         if (socketRef.current) {
+          socketRef.current.emit('userTyping', false);
           socketRef.current.disconnect();
           socketRef.current = null;
         }
