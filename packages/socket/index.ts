@@ -1,5 +1,4 @@
 import { Server } from 'socket.io';
-import axios from 'axios';
 import type {
   ClientToServerEvents,
   InterServerEvents,
