@@ -9,9 +9,10 @@ import { useParams, useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 
-const ChatPage: React.FC = () => {
+const ChatPage = ({ params }: { params: { id: string } }) => {
   const Realm = useContext(RealmContext);
-  let { id } = useParams<{ id: string }>();
+  // let { id } = useParams<{ id: string }>();
+  let { id } = params;
   const router = useRouter();
 
   const [roomName, setRoomName] = useState<string>('Chat');
