@@ -142,7 +142,7 @@ const MessageBubble: FC<Props> = ({
                 {thisMessage.content.trim()}
               </p>
             </div>
-          ) : (thisMessage.type === 'emoji' ? (
+          ) : thisMessage.type === 'emoji' ? (
             <div className={`flex w-full justify-end text-6xl`}>
               <div
                 className="mt-4"
@@ -161,14 +161,11 @@ const MessageBubble: FC<Props> = ({
                   setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                   console.log(thisMessage, prevMessage, nextMessage);
                 }}>
-                  {/* {`${thisMessage.content}`} */}
-                <Image src={`/sticker/${thisMessage.content}`}  alt="" width={100} height={100} />
-                
+                {/* {`${thisMessage.content}`} */}
+                <Image src={`/sticker/${thisMessage.content}`} alt="" width={100} height={100} />
               </div>
             </div>
-          ))
-        
-          }
+          )}
         </div>
       </div>
     );
@@ -274,7 +271,7 @@ const MessageBubble: FC<Props> = ({
                   {thisMessage.content.trim()}
                 </p>
               </div>
-            ) : (thisMessage.type === 'emoji' ? (
+            ) : thisMessage.type === 'emoji' ? (
               <div className={`flex w-full justify-start text-6xl`}>
                 <div
                   className="mt-4"
@@ -285,9 +282,7 @@ const MessageBubble: FC<Props> = ({
                   {emojis[parseInt(thisMessage.content.trim())]}
                 </div>
               </div>
-            )
-            :
-            (
+            ) : (
               <div className={`flex w-full justify-end text-6xl`}>
                 <div
                   className="mt-4"
@@ -295,14 +290,11 @@ const MessageBubble: FC<Props> = ({
                     setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                     console.log(thisMessage, prevMessage, nextMessage);
                   }}>
-                    {/* {`${thisMessage.content}`} */}
-                  <Image src={`/sticker/${thisMessage.content}`}  alt="" width={100} height={100} />
-                  
+                  {/* {`${thisMessage.content}`} */}
+                  <Image src={`/sticker/${thisMessage.content}`} alt="" width={100} height={100} />
                 </div>
               </div>
-            ))
-            
-            }
+            )}
           </div>
         </div>
       </div>

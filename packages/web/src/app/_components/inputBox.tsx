@@ -2,13 +2,14 @@
 
 import { ClientToServerEvents, ServerToClientEvents } from '@shared/types/socket';
 import React, { useEffect, useRef, useState } from 'react';
-import { BiSticker,BiSolidSmile } from 'react-icons/bi';
+import { BiSolidSmile, BiSticker } from 'react-icons/bi';
 import { IoSend } from 'react-icons/io5';
 import { RiEmojiStickerFill, RiEmotionFill } from 'react-icons/ri';
 import { Socket } from 'socket.io-client';
 
 import EmojiModal from './emojiModal';
 import StickerModal from './stickerModal';
+
 interface Props {
   onSendMessage: (message: string, type: string) => void;
   socketTyping: (bool: boolean) => void;
@@ -62,7 +63,7 @@ const InputBox: React.FC<Props> = ({ onSendMessage, socketTyping }) => {
   };
   const handleEmojiMouseLeave = () => {
     setIsEmojiHovering(false);
-  }
+  };
 
   const handleSelectEmoji = (index: number) => {
     onSendMessage(index.toString(), 'emoji');
@@ -71,7 +72,7 @@ const InputBox: React.FC<Props> = ({ onSendMessage, socketTyping }) => {
   const handleSelectSticker = (sticker: string) => {
     onSendMessage(sticker, 'sticker');
     setIsStickerModalOpen(false);
-  }
+  };
 
   useEffect(() => {
     if (input.trim().length > 0 && isTyping === false) {

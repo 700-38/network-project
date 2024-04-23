@@ -31,8 +31,8 @@ const ChatPage: React.FC = () => {
   // }
 
   useEffect(() => {
-    console.log("here is id", id)
-  }, [id])
+    console.log('here is id', id);
+  }, [id]);
 
   useEffect(() => {
     if (Realm.realm?.isLoggedIn && currentRoom != null) {

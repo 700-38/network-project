@@ -7,12 +7,7 @@ interface EmojiModalProps {
   isVisible: boolean;
 }
 
-
-
-export const emojis = ['🌟', '💬', '☠️', '🗿', '☕️'
-
-
-]; // Example stickers, can be images or other components
+export const emojis = ['🌟', '💬', '☠️', '🗿', '☕️']; // Example stickers, can be images or other components
 
 const EmojiModal: React.FC<EmojiModalProps> = ({ onSelectSticker, isVisible }) => {
   if (!isVisible) return null;
