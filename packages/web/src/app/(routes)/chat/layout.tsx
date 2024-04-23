@@ -7,7 +7,7 @@ import Sidebar from '@components/sideBar';
 import { RealmContext } from '@context/realm';
 import { ChatRoomDoc, IMessageProp, ObjectId, ObjectIdUtilities } from '@shared/types/message';
 import { ClientToServerEvents, ServerToClientEvents } from '@shared/types/socket';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Socket, io } from 'socket.io-client';
@@ -18,7 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const Realm = useContext(RealmContext);
-  let { id } = useParams<{ id: string }>();
+  // let { id } = useParams<{ id: string }>();
+  let id = useSearchParams().get('id') || '';
   const router = useRouter();
 
   const modalRef = useRef<HTMLDialogElement | null>(null);
@@ -69,7 +70,7 @@ export default function RootLayout({
 
   useEffect(() => {
     if (Realm.realm?.isLoggedIn) {
-      socketRef.current = io('http://localhost:3005', {
+      socketRef.current = io('https://cp-network-chat-socket.thegoose.work', {
         reconnectionDelayMax: 10000,
         auth: (cb) => {
           const getAccessToken = () => {
@@ -130,8 +131,8 @@ export default function RootLayout({
 
   const handleSelectRoom = (roomId: ObjectId) => {
     if (currentRoom === roomId) return;
-    console.log(`Navigation to /chat/${roomId.toString()}`);
-    router.push(`/chat/${roomId.toString()}`);
+    console.log(`Navigation to /chat/room/?id=${roomId.toString()}`);
+    router.push(`/chat/room/?id=${roomId.toString()}`);
   };
 
   const openModal = () => {

@@ -5,14 +5,14 @@ import MessageList from '@components/messageList';
 import { RealmContext } from '@context/realm';
 import { IMessageProp, ObjectIdUtilities } from '@shared/types/message';
 import { ClientToServerEvents, ServerToClientEvents } from '@shared/types/socket';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 
-const ChatPage = ({ params }: { params: { id: string } }) => {
+const ChatPage: React.FC = () => {
   const Realm = useContext(RealmContext);
   // let { id } = useParams<{ id: string }>();
-  let { id } = params;
+  let id = useSearchParams().get('id') || '';
   const router = useRouter();
 
   const [roomName, setRoomName] = useState<string>('Chat');
@@ -25,9 +25,14 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
   const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
 
   const currentRoom = ObjectIdUtilities.createObjectIdFromString(id);
-  if (currentRoom == null) {
-    router.push('/chat');
-  }
+  // if (currentRoom == null) {
+  //   console.log("gotolangind")
+  //   router.push('/chat');
+  // }
+
+  useEffect(() => {
+    console.log("here is id", id)
+  }, [id])
 
   useEffect(() => {
     if (Realm.realm?.isLoggedIn && currentRoom != null) {
@@ -56,7 +61,7 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
           setLoading(false);
         });
     }
-  }, [Realm.realm?.isLoggedIn]);
+  }, [Realm.realm?.isLoggedIn, id]);
 
   useEffect(() => {
     const initial = async () => {
@@ -81,11 +86,11 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
     };
 
     initial();
-  }, [Realm.realm?.isLoggedIn]);
+  }, [Realm.realm?.isLoggedIn, id]);
 
   useEffect(() => {
     if (Realm.realm?.isLoggedIn) {
-      socketRef.current = io('http://localhost:3005', {
+      socketRef.current = io('https://cp-network-chat-socket.thegoose.work', {
         reconnectionDelayMax: 10000,
         auth: (cb) => {
           const getAccessToken = () => {
@@ -126,7 +131,7 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
         }
       };
     }
-  }, [Realm.realm?.isLoggedIn]);
+  }, [Realm.realm?.isLoggedIn, id]);
 
   const addMessageToArray = (msg: IMessageProp) => {
     console.log('New message', msg);

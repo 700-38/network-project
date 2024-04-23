@@ -31,12 +31,12 @@ const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
         names
       );
       // console.log(newChat);
-      router.push(`/chat/${newChatId}`);
+      router.push(`/chat/room/?id=${newChatId}`);
       modalRef.current?.close();
     } else {
       const newChatId = await Realm.createChatRoom(groupName, names);
       // console.log(newChat);
-      router.push(`/chat/${newChatId}`);
+      router.push(`/chat/room/?id=${newChatId}`);
       modalRef.current?.close();
     }
   };
@@ -49,7 +49,7 @@ const CreateRoomDialog: FC<CreateRoomDialogProps> = ({ modalRef }) => {
 
     if (!(await Realm.isRoomPrivate(groupId)) && (await Realm.isRoomExist(groupId))) {
       await Realm.joinChatRoom(ObjectIdUtilities.createObjectIdFromString(groupId));
-      router.push(`/chat/${groupId}`);
+      router.push(`/chat/room/?id=${groupId}`);
       modalRef.current?.close();
       return;
     }

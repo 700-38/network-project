@@ -12,7 +12,7 @@ const ChatLandingPage = () => {
     if (Realm.realm?.isLoggedIn)
       Realm.getChatList().then((rooms) => {
         if (rooms.length > 0) {
-          router.push(`/chat/${rooms[0]._id}`);
+          router.push(`/chat/room/?id=${rooms[0]._id}`);
         }
       });
   }, [Realm.realm?.isLoggedIn]);
