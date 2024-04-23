@@ -202,10 +202,7 @@ const MessageBubble: FC<Props> = ({
                 nextMessage.id === isClicked) &&
               'opacity-100'
             } rounded-full bg-gray-400 opacity-0 transition-opacity`}>
-            <UserProfileImage
-              name={profileName.slice(0, 1).toLocaleUpperCase() + profileName.slice(1)}
-              size={50}
-            />
+            <UserProfileImage name={profileName} size={50} />
             {/* <Image
               src={`https://placehold.co/400x400.png?text=${'A'}`}
               alt={'A'}

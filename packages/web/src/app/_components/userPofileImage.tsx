@@ -12,8 +12,8 @@ const UserProfileImage: FC<UserProfileImageProps> = ({ name, size }) => {
   return (
     <>
       <Image
-        src={`https://placehold.co/400x400/${seededHexColor(name)}/FFF.png?text=${name[0]}`}
-        alt={name[0]}
+        src={`https://placehold.co/400x400/${seededHexColor(name)}/FFF.png?text=${name[0]?.toUpperCase() || ''}`}
+        alt={name[0] || 'profile image'}
         className="rounded-full"
         width={size}
         height={size}

@@ -7,7 +7,7 @@ interface StickerModalProps {
   isVisible: boolean;
 }
 
-export const stickers = ['🌟', '💬', '☠️', '🗿']; // Example stickers, can be images or other components
+export const stickers = ['🌟', '💬', '☠️', '🗿', '☕️']; // Example stickers, can be images or other components
 
 const StickerModal: React.FC<StickerModalProps> = ({ onSelectSticker, isVisible }) => {
   if (!isVisible) return null;

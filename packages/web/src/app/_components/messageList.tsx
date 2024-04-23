@@ -76,6 +76,7 @@ const MessageList: React.FC<Props> = ({
           <div className="select-none text-gray-400">Loading...</div>
         </div>
       )}
+      <div className="mt-4" />
       <MessageTyping roomMembers={roomMembers} userTyping={userTyping} />
       <div ref={endOfMessagesRef} /> {/* Invisible div at the end of the list */}
     </div>
