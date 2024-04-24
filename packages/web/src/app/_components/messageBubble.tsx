@@ -8,7 +8,7 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 
 import { IMessageProp } from '../../../../../shared/types/message';
 import BouncingDotsLoader from './bouncingDotsLoader';
-import { stickers } from './stickerModal';
+import { emojis } from './emojiModal';
 import UserProfileImage from './userPofileImage';
 
 interface Props {
@@ -142,6 +142,17 @@ const MessageBubble: FC<Props> = ({
                 {thisMessage.content.trim()}
               </p>
             </div>
+          ) : thisMessage.type === 'emoji' ? (
+            <div className={`flex w-full justify-end text-6xl`}>
+              <div
+                className="mt-4"
+                onClick={() => {
+                  setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
+                  console.log(thisMessage, prevMessage, nextMessage);
+                }}>
+                {emojis[parseInt(thisMessage.content.trim())]}
+              </div>
+            </div>
           ) : (
             <div className={`flex w-full justify-end text-6xl`}>
               <div
@@ -150,7 +161,8 @@ const MessageBubble: FC<Props> = ({
                   setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                   console.log(thisMessage, prevMessage, nextMessage);
                 }}>
-                {stickers[parseInt(thisMessage.content.trim())]}
+                {/* {`${thisMessage.content}`} */}
+                <Image src={`/sticker/${thisMessage.content}`} alt="" width={100} height={100} />
               </div>
             </div>
           )}
@@ -259,7 +271,7 @@ const MessageBubble: FC<Props> = ({
                   {thisMessage.content.trim()}
                 </p>
               </div>
-            ) : (
+            ) : thisMessage.type === 'emoji' ? (
               <div className={`flex w-full justify-start text-6xl`}>
                 <div
                   className="mt-4"
@@ -267,7 +279,19 @@ const MessageBubble: FC<Props> = ({
                     setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
                     console.log(thisMessage, prevMessage, nextMessage);
                   }}>
-                  {stickers[parseInt(thisMessage.content.trim())]}
+                  {emojis[parseInt(thisMessage.content.trim())]}
+                </div>
+              </div>
+            ) : (
+              <div className={`flex w-full justify-end text-6xl`}>
+                <div
+                  className="mt-4"
+                  onClick={() => {
+                    setIsClicked(isClicked === thisMessage.id ? '' : thisMessage.id);
+                    console.log(thisMessage, prevMessage, nextMessage);
+                  }}>
+                  {/* {`${thisMessage.content}`} */}
+                  <Image src={`/sticker/${thisMessage.content}`} alt="" width={100} height={100} />
                 </div>
               </div>
             )}
