@@ -70,7 +70,7 @@ export default function RootLayout({
 
   useEffect(() => {
     if (Realm.realm?.isLoggedIn) {
-      socketRef.current = io('https://cp-network-chat-socket.thegoose.work', {
+      socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_ENDPOINT || 'http://localhost:3005', {
         reconnectionDelayMax: 10000,
         auth: (cb) => {
           const getAccessToken = () => {

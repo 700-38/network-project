@@ -12,9 +12,10 @@ import type { IChatRoom } from '@shared/types/message';
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>({
   cors: { origin: '*' },
 });
-const realmApiKey = 'KA6WGKQIFFoZFgKlyBbpdkw8NLgaA6V7bVvqSCLxMOKCaR5B2bQpAwvXArmtryED';
-const mongoURI = 'mongodb+srv://kuranasaki:eZVZ1iRkAzYJskMp@cluster0.dksupcd.mongodb.net/';
-// io.attachApp(app);
+
+const mongoURI =
+  process.env.MONGO_URI ||
+  'mongodb+srv://kuranasaki:eZVZ1iRkAzYJskMp@cluster0.dksupcd.mongodb.net/';
 
 const mongoClient = new MongoClient(mongoURI, {
   serverApi: {

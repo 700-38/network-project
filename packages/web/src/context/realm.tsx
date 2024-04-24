@@ -14,11 +14,10 @@ import type { Dispatch, FC, PropsWithChildren, ReactPortal, SetStateAction } fro
 import React from 'react';
 import * as Realm from 'realm-web';
 
-// import { useState } from 'react';
-// const atlasAppId = 'application-0-phbwtop';
-const atlasAppId = 'application-0-ahdtpog';
-// const apiKey = 'uqkKPevpKWLdgUxckOFdb1r2oYg5lAXAlLtcpbbiNxl0HVk1WWjO4LAk0m8ce3jC';
-const apiKey = 'ewtZ3PaQTC1eyah0QfmIlGhZt5dwWQzbzPKEVMzJjbGOH6cLBIIjqLoCXQvYdIdH';
+const atlasAppId = process.env.NEXT_PUBLIC_SOCKET_ENDPOINT || 'application-0-ahdtpog';
+const apiKey =
+  process.env.NEXT_PUBLIC_ATLAS_API_KEY ||
+  'ewtZ3PaQTC1eyah0QfmIlGhZt5dwWQzbzPKEVMzJjbGOH6cLBIIjqLoCXQvYdIdH';
 interface TRealmContext {
   db: globalThis.Realm.Services.MongoDBDatabase | null;
   realm: Realm.User | null;

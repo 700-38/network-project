@@ -4,4 +4,21 @@ services:
   socket:
     build: ./packages/socket
     ports:
-      - "80:3000"
+      - "3005:3005"
+    environment:
+      MONGO_URI: ${MONGO_URI}
+  frontend:
+    build:
+      context: ./packages/web
+      additional_contexts:
+        shared: ./shared
+        realm: .
+      args:
+        - NEXT_PUBLIC_SOCKET_ENDPOINT=${NEXT_PUBLIC_SOCKET_ENDPOINT}
+        - NEXT_PUBLIC_ATLAS_APP_ID=${NEXT_PUBLIC_ATLAS_APP_ID}
+        - NEXT_PUBLIC_ATLAS_API_KEY=${NEXT_PUBLIC_ATLAS_API_KEY}
+        - NEXT_PUBLIC_TEST=test
+    ports:
+      - "80:80"
+    depends_on:
+      - socket
