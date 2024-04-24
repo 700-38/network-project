@@ -2,6 +2,8 @@
 
 intensionally spell Massager not ~~Messenger~~
 
+[Demo](https://cp-network-chat-web.pages.dev/)
+
 ## Features
 
 - Authentication (password more than 6 characters)
@@ -34,7 +36,7 @@ bun run socket:dev
 Or
 
 ```bash
-./run.sh
+./start.sh
 ```
 
 **You need to edit the environment**
