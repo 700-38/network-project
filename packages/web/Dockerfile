@@ -35,7 +35,7 @@ RUN echo $NEXT_PUBLIC_ATLAS_API_KEY >> test.txt
 RUN echo $NEXT_PUBLIC_TEST >> test.txt
 
 # Build the Next.js application with export
-RUN cd ./packages/web && npm run build
+RUN cd ./packages/web && bun run build
 
 # Final image
 FROM nginx:alpine

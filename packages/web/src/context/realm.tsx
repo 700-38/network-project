@@ -14,7 +14,7 @@ import type { Dispatch, FC, PropsWithChildren, ReactPortal, SetStateAction } fro
 import React from 'react';
 import * as Realm from 'realm-web';
 
-const atlasAppId = process.env.NEXT_PUBLIC_SOCKET_ENDPOINT || 'application-0-ahdtpog';
+const atlasAppId = process.env.NEXT_PUBLIC_ATLAS_APP_ID || 'application-0-ahdtpog';
 const apiKey =
   process.env.NEXT_PUBLIC_ATLAS_API_KEY ||
   'ewtZ3PaQTC1eyah0QfmIlGhZt5dwWQzbzPKEVMzJjbGOH6cLBIIjqLoCXQvYdIdH';
