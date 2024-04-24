@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Deploying Frontend on Cloudflare Workers with Wrangler
 
-## Getting Started
+This guide will walk you through the steps to deploy a Next.js build on Cloudflare Workers using Wrangler.
 
-First, run the development server:
+## Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Before you begin, make sure you have the following:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- A Next.js project with a build ready.
+- Node.js and npm installed on your machine.
+- A Cloudflare account.
+- Wrangler CLI installed. You can install it by running the following command:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+  ```shell
+  bun i -g @cloudflare/wrangler
+  ```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Wrangler Login:
 
-## Learn More
+  ```shell
+  bunx wrangler login
+  ```
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Steps
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+1. Install depenency:
 
-## Deploy on Vercel
+   ```shell
+   bun i
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Update the generated `wrangler.toml` file with your Cloudflare account details. Make sure to set the `account_id` and `zone_id` fields.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+3. Build your Next.js project:
+
+   ```shell
+   bun run build
+   ```
+
+4. Deploy your Next.js build to Cloudflare Workers:
+
+   ```shell
+   bunx wrangler pages deploy ./out  
+   ```
+
+5. After the deployment is successful, you will receive a URL for your deployed Next.js application.
+
+## Conclusion
+
+Congratulations! You have successfully deployed your Next.js build on Cloudflare Workers using Wrangler. You can now access your application using the provided URL.
+
+For more information on Cloudflare Workers and Wrangler, refer to the official documentation.
