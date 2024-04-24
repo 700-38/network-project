@@ -1,15 +1,21 @@
-# backend
+# Socker Server
 
-## Development
+## For develop:
 
-To install dependencies:
+1.  Install depenency:
 
-```bash
-bun install
-```
+    ```bash
+    bun i
+    ```
 
-To run:
+2.  Run the development server:
 
-```bash
-bun run index.ts
-```
+    ```bash
+    bun run dev
+    ```
+
+3.  Or start server with
+
+    ```bash
+    bun run index.ts
+    ```

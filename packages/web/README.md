@@ -21,8 +21,21 @@ Before you begin, make sure you have the following:
   bunx wrangler login
   ```
 
+## For develop:
 
-## Steps
+1. Install depenency:
+
+   ```shell
+   bun i
+   ```
+
+2. Run the development server:
+
+   ```shell
+   bun run dev
+   ```
+
+## For deployment:
 
 1. Install depenency:
 
@@ -41,7 +54,7 @@ Before you begin, make sure you have the following:
 4. Deploy your Next.js build to Cloudflare Workers:
 
    ```shell
-   bunx wrangler pages deploy ./out  
+   bunx wrangler pages deploy ./out
    ```
 
 5. After the deployment is successful, you will receive a URL for your deployed Next.js application.

@@ -4,21 +4,37 @@ intensionally spell Massager not ~~Messenger~~
 
 ## Features
 
+- Authentication (password more than 6 characters)
+- Chat History
+- Chat timestamp
+- Private Chat
+- Group Chat
 - Active user
-- Authentication
 - Emoji & Sticker
 - User Typing
-- Chat timestamp
-- Private Chat add by ID
 
-## How to deploy
+## Requirements
 
-### [Frontend](./packages/web/README.md)
+- bun=1.1.4
 
-### [Socket](./packages/socket/README.md)
+## How to run dev
+
+### Frontend [read more](./packages/web/README.md)
+
+```
+bun run frontend:dev
+```
+
+### Socket Server [read more](./packages/socket/README.md)
+
+```
+bun run socket:dev
+```
 
 Or
 
 ```bash
-docker compose up -d #Socket only
+./run.sh
 ```
+
+**You need to edit the environment**
